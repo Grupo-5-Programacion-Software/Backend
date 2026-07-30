@@ -1,3 +1,4 @@
+
 import productsData from "../data/products.data.js";
 import categoriesData from "../data/categories.data.js";
 

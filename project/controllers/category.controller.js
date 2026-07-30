@@ -1,6 +1,15 @@
+
 import { CategoryModel } from "../models/category.model.js";
 import { ProductModel } from "../models/product.model.js";
 
+/**
+ * Controlador de categorias.
+ *
+ * Gestiona las operaciones CRUD de las categorias y la
+ * consulta de los productos asociados a cada categoria.
+ */
+
+// Obtiene todas las categorias registradas.
 const getAllCategories = (req, res) => {
   try {
     const categories = CategoryModel.findAll();
@@ -20,6 +29,7 @@ const getAllCategories = (req, res) => {
   }
 };
 
+// Busca una categoria utilizando su identificador.
 const getCategoryById = (req, res) => {
   try {
     const { id } = req.params;
@@ -49,6 +59,7 @@ const getCategoryById = (req, res) => {
   }
 };
 
+// Crea una nueva categoria despues de validar los datos recibidos.
 const createCategory = (req, res) => {
   try {
     const { name } = req.body;
@@ -79,6 +90,7 @@ const createCategory = (req, res) => {
   }
 };
 
+// Actualiza la informacion de una categoria existente.
 const updateCategory = (req, res) => {
   try {
     const { id } = req.params;
@@ -108,6 +120,7 @@ const updateCategory = (req, res) => {
   }
 };
 
+// Elimina una categoria siempre que no tenga productos asociados.
 const deleteCategory = (req, res) => {
   try {
     const { id } = req.params;
@@ -149,6 +162,7 @@ const deleteCategory = (req, res) => {
   } 
 };
 
+// Obtiene todos los productos pertenecientes a una categoria
 const getProductsByCategory = (req, res) => {
   try {
     const { id } = req.params;

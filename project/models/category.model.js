@@ -1,3 +1,4 @@
+
 import categoriesData from "../data/categories.data.js";
 
 export const CategoryModel = {

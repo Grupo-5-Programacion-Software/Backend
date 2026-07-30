@@ -1,3 +1,4 @@
+
 import { ProductModel } from "../models/product.model.js";
 
 const getAllProducts = (req, res) => {
