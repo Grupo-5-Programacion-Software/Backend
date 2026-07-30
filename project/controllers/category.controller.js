@@ -1,5 +1,4 @@
 import { CategoryModel } from "../models/category.model.js";
-// IMPORTANTE: Importamos el modelo de productos para las reglas de negocio cruzadas
 import { ProductModel } from "../models/product.model.js";
 
 const getAllCategories = (req, res) => {
@@ -109,12 +108,10 @@ const updateCategory = (req, res) => {
   }
 };
 
-// RETO DE INTEGRIDAD: Eliminar validando dependencias
 const deleteCategory = (req, res) => {
   try {
     const { id } = req.params;
 
-    // 1. Verificamos si la categoría existe antes de intentar borrarla
     const categoryExists = CategoryModel.findById(Number(id));
     if (!categoryExists) {
       return res.status(404).json({
@@ -125,10 +122,9 @@ const deleteCategory = (req, res) => {
       });
     }
 
-    // 2. Regla de Negocio: Preguntamos al Modelo de Productos si hay recursos vinculados
     const linkedProducts = ProductModel.findByCategoryId(Number(id));
     if (linkedProducts && linkedProducts.length > 0) {
-      return res.status(409).json({ // 409 Conflict
+      return res.status(409).json({
         success: false,
         message: "No se puede eliminar la categoría porque tiene al menos un recurso vinculado",
         data: [],
@@ -136,7 +132,6 @@ const deleteCategory = (req, res) => {
       });
     }
 
-    // 3. Si pasa las validaciones, procedemos a eliminar
     const isDeleted = CategoryModel.delete(Number(id));
     res.status(200).json({
       success: true,
@@ -147,19 +142,17 @@ const deleteCategory = (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: `Error al intentar eliminar la categoría`,
+      message: "Error al intentar eliminar la categoría",
       data: [],
       errors: [],
     });
   } 
 };
 
-// RUTA RELACIONAL: Traer todos los productos de una categoría
 const getProductsByCategory = (req, res) => {
   try {
     const { id } = req.params;
 
-    // 1. Validar que la categoría exista
     const categoryExists = CategoryModel.findById(Number(id));
     if (!categoryExists) {
       return res.status(404).json({

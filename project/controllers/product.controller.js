@@ -23,7 +23,6 @@ const getProductById = (req, res) => {
   try {
     const { id } = req.params;
     const product = ProductModel.findById(Number(id));
-    // Validamos si el producto existe
     if (!product) {
       return res.status(404).json({
         success: false,

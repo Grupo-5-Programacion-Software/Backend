@@ -1,4 +1,5 @@
 import productsData from "../data/products.data.js";
+import categoriesData from "../data/categories.data.js";
 
 export const ProductModel = {
   findAll: () => {
@@ -9,14 +10,14 @@ export const ProductModel = {
     return productsData.find((p) => p.id === id);
   },
 
-  // NUEVO MÉTODO: Búsqueda relacional
   findByCategoryId: (categoryId) => {
-    // Usamos .filter() porque una categoría puede tener MUCHOS productos
-    // Retorna un arreglo (vacío si no hay coincidencias, o con los productos encontrados)
     return productsData.filter((p) => p.categoryId === categoryId);
   },
 
   create: (newProduct) => {
+    if (newProduct.categoryId && !categoriesData.find((c) => c.id === newProduct.categoryId)) {
+      throw new Error(`La categoría con ID ${newProduct.categoryId} no existe`);
+    }
     const id = productsData.length + 1;
     const productWithId = { id, ...newProduct };
     productsData.push(productWithId);
@@ -26,6 +27,10 @@ export const ProductModel = {
   update: (id, updatedFields) => {
     const index = productsData.findIndex((p) => p.id === id);
     if (index === -1) return null;
+
+    if (updatedFields.categoryId && !categoriesData.find((c) => c.id === updatedFields.categoryId)) {
+      throw new Error(`La categoría con ID ${updatedFields.categoryId} no existe`);
+    }
 
     productsData[index] = { ...productsData[index], ...updatedFields };
     return productsData[index];
