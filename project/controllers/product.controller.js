@@ -1,13 +1,22 @@
 import { ProductModel } from "../models/product.model.js";
 
 const getAllProducts = (req, res) => {
-  const products = ProductModel.findAll();
-  res.status(200).json({
-    success: true,
-    message: "Lista de productos",
-    data: products,
-    errors: [],
-  });
+  try {
+    const products = ProductModel.findAll();
+    res.status(200).json({
+      success: true,
+      message: "Lista de productos",
+      data: products,
+      errors: [],
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error al obtener los productos",
+      data: [],
+      errors: [error.message],
+    });
+  }
 };
 
 const getProductById = (req, res) => {
@@ -40,43 +49,61 @@ const getProductById = (req, res) => {
 };
 
 const createProduct = (req, res) => {
-  const { name, price } = req.body;
-  // Validación simple
-  if (!name || !price) {
-    return res.status(400).json({
-      success: false,
-      message: "Nombre y precio son obligatorios",
-      data: [],
+  try {
+    const { name, price, categoryId } = req.body;
+
+    if (!name || !price) {
+      return res.status(400).json({
+        success: false,
+        message: "Nombre y precio son obligatorios",
+        data: [],
+        errors: [],
+      });
+    }
+
+    const newProduct = ProductModel.create({ name, price, categoryId });
+    res.status(201).json({
+      success: true,
+      message: "Producto creado correctamente",
+      data: newProduct,
       errors: [],
     });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error al crear el producto",
+      data: [],
+      errors: [error.message],
+    });
   }
-
-  const newProduct = ProductModel.create({ name, price });
-  res.status(201).json({
-    success: true,
-    message: "Producto creado correctamente",
-    data: newProduct,
-    errors: [],
-  });
 };
 
 const updateProduct = (req, res) => {
-  const { id } = req.params;
-  const updatedProduct = ProductModel.update(Number(id), req.body);
-  if (!updatedProduct) { 
-    return res.status(404).json({
-      success: false,
-      message: `Producto con ID ${id} no encontrado`,
-      data: [],
+  try {
+    const { id } = req.params;
+    const updatedProduct = ProductModel.update(Number(id), req.body);
+    if (!updatedProduct) { 
+      return res.status(404).json({
+        success: false,
+        message: `Producto con ID ${id} no encontrado`,
+        data: [],
+        errors: [],
+      });
+    }
+    res.status(200).json({
+      success: true,
+      message: "Producto actualizado correctamente",
+      data: updatedProduct,
       errors: [],
     });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error al actualizar el producto",
+      data: [],
+      errors: [error.message],
+    });
   }
-  res.status(200).json({
-    success: true,
-    message: "Producto actualizado correctamente",
-    data: updatedProduct,
-    errors: [],
-  });
 };
 
 const deleteProduct = (req, res) => {

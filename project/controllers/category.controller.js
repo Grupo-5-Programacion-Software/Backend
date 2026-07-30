@@ -3,13 +3,22 @@ import { CategoryModel } from "../models/category.model.js";
 import { ProductModel } from "../models/product.model.js";
 
 const getAllCategories = (req, res) => {
-  const categories = CategoryModel.findAll();
-  res.status(200).json({
-    success: true,
-    message: "Lista de categorías",
-    data: categories,
-    errors: [],
-  });
+  try {
+    const categories = CategoryModel.findAll();
+    res.status(200).json({
+      success: true,
+      message: "Lista de categorías",
+      data: categories,
+      errors: [],
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error al obtener las categorías",
+      data: [],
+      errors: [error.message],
+    });
+  }
 };
 
 const getCategoryById = (req, res) => {
@@ -42,45 +51,62 @@ const getCategoryById = (req, res) => {
 };
 
 const createCategory = (req, res) => {
-  const { name } = req.body;
+  try {
+    const { name } = req.body;
 
-  // Validación simple
-  if (!name) {
-    return res.status(400).json({
-      success: false,
-      message: "El nombre de la categoría es obligatorio",
-      data: [],
+    if (!name) {
+      return res.status(400).json({
+        success: false,
+        message: "El nombre de la categoría es obligatorio",
+        data: [],
+        errors: [],
+      });
+    }
+
+    const newCategory = CategoryModel.create({ name });
+    res.status(201).json({
+      success: true,
+      message: "Categoría creada correctamente",
+      data: newCategory,
       errors: [],
     });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error al crear la categoría",
+      data: [],
+      errors: [error.message],
+    });
   }
-
-  const newCategory = CategoryModel.create({ name });
-  res.status(201).json({
-    success: true,
-    message: "Categoría creada correctamente",
-    data: newCategory,
-    errors: [],
-  });
 };
 
 const updateCategory = (req, res) => {
-  const { id } = req.params;
-  const updatedCategory = CategoryModel.update(Number(id), req.body);
+  try {
+    const { id } = req.params;
+    const updatedCategory = CategoryModel.update(Number(id), req.body);
 
-  if (!updatedCategory) {
-    return res.status(404).json({
-      success: false,
-      message: `Categoría con ID ${id} no encontrada`,
-      data: [],
+    if (!updatedCategory) {
+      return res.status(404).json({
+        success: false,
+        message: `Categoría con ID ${id} no encontrada`,
+        data: [],
+        errors: [],
+      });
+    }
+    res.status(200).json({
+      success: true,
+      message: "Categoría actualizada correctamente",
+      data: updatedCategory,
       errors: [],
     });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error al actualizar la categoría",
+      data: [],
+      errors: [error.message],
+    });
   }
-  res.status(200).json({
-    success: true,
-    message: "Categoría actualizada correctamente",
-    data: updatedCategory,
-    errors: [],
-  });
 };
 
 // RETO DE INTEGRIDAD: Eliminar validando dependencias
