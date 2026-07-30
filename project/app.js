@@ -12,11 +12,20 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/', (req, res) => {
   res.status(200).json({
     success: true,
-    messaje: "Saludo de la API",
+    message: "Saludo de la API",
     data: [],
     errors: [],
   });
 })
+
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "API funcionando correctamente",
+    data: { uptime: process.uptime() },
+    errors: [],
+  });
+});
 
 app.use("/products", productRouter);
 app.use("/categories", categoryRouter);
