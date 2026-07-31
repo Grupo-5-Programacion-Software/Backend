@@ -1,3 +1,47 @@
+# Backend - API de Gestión de Productos y Categorías
+
+## Descripción
+
+Este proyecto corresponde al Backend de una API REST desarrollada con Node.js y Express. Permite administrar productos y categorías mediante operaciones CRUD siguiendo una arquitectura Modelo-Controlador (MVC).
+
+## Tecnologías utilizadas
+
+- Node.js
+- Express.js
+- JavaScript (ES Modules)
+
+## Estructura del proyecto
+
+```
+project/
+├── controllers/
+├── data/
+├── models/
+├── routes/
+└── app.js
+```
+
+## Instalación
+
+```bash
+npm install
+```
+
+## Ejecución
+
+```bash
+npm start
+```
+
+o
+
+```bash
+npm run dev
+```
+
+---
+
+
 ### **Capa de Datos (`products.data.js`)**
 
 Esta capa representa nuestra **Fuente de Datos**. En un desarrollo profesional, aquí es donde conectaríamos con una base de datos real (como MySQL o PostgreSQL). Para este ejercicio, utilizamos un **arreglo de objetos en memoria** que actúa como nuestro almacén temporal.
