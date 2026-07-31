@@ -1,6 +1,14 @@
 
 import { ProductModel } from "../models/product.model.js";
 
+/**
+ * Controlador de productos.
+ *
+ * Gestiona las operaciones CRUD relacionadas con
+ * los productos del sistema.
+ */
+
+// Obtiene todos los productos registrados.
 const getAllProducts = (req, res) => {
   try {
     const products = ProductModel.findAll();
@@ -20,6 +28,7 @@ const getAllProducts = (req, res) => {
   }
 };
 
+// Busca un producto por su identificador.
 const getProductById = (req, res) => {
   try {
     const { id } = req.params;
@@ -48,6 +57,7 @@ const getProductById = (req, res) => {
   }
 };
 
+// Registra un nuevo producto.
 const createProduct = (req, res) => {
   try {
     const { name, price, categoryId } = req.body;
@@ -78,6 +88,7 @@ const createProduct = (req, res) => {
   }
 };
 
+// Actualiza la información de un producto existente.
 const updateProduct = (req, res) => {
   try {
     const { id } = req.params;
@@ -106,6 +117,7 @@ const updateProduct = (req, res) => {
   }
 };
 
+// Elimina un producto utilizando su identificador.
 const deleteProduct = (req, res) => {
   try {
     const { id } = req.params;
