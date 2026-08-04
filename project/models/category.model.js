@@ -33,7 +33,7 @@ export const CategoryModel = {
    * @returns {{id: number, name: string}} La categoría creada con su ID asignado.
    */
   create: (newCategory) => {
-    const id = categoriesData.length + 1;
+    const id = Math.max(0, ...categoriesData.map((c) => c.id)) + 1;
     const categoryWithId = { id, ...newCategory };
     categoriesData.push(categoryWithId);
     return categoryWithId;

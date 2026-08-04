@@ -47,7 +47,7 @@ export const ProductModel = {
     if (newProduct.categoryId && !categoriesData.find((c) => c.id === newProduct.categoryId)) {
       throw new Error(`La categoría con ID ${newProduct.categoryId} no existe`);
     }
-    const id = productsData.length + 1;
+    const id = Math.max(0, ...productsData.map((p) => p.id)) + 1;
     const productWithId = { id, ...newProduct };
     productsData.push(productWithId);
     return productWithId;
