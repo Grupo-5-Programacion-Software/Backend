@@ -19,12 +19,13 @@ import {
 const categoryRouter = Router();
 
 // Rutas CRUD de categorías.
-categoryRouter.get("/", getAllCategories);
-categoryRouter.get("/:id", getCategoryById);
-categoryRouter.post("/", createCategory);
-categoryRouter.put("/:id", updateCategory);
-categoryRouter.delete("/:id", deleteCategory);
+categoryRouter.get("/", getAllCategories);                 // Listar todas las categorías
+categoryRouter.get("/:id", getCategoryById);               // Obtener una categoría por ID
+categoryRouter.post("/", createCategory);                  // Crear una categoría
+categoryRouter.put("/:id", updateCategory);                // Actualizar una categoría
+categoryRouter.delete("/:id", deleteCategory);             // Eliminar una categoría
 
-categoryRouter.get("/:id/products", getProductsByCategory);
+// Productos asociados a una categoría.
+categoryRouter.get("/:id/products", getProductsByCategory); // GET /categories/:id/products
 
 export default categoryRouter;
