@@ -82,16 +82,16 @@ const createProduct = async (req, res) => {
   try {
     const { name, price, categoryId } = req.body;
 
-    if (!name || !price) {
+    if (!name || price === undefined || price === null || price === "" || isNaN(Number(price)) || Number(price) < 0) {
       return res.status(400).json({
         success: false,
-        message: "Nombre y precio son obligatorios",
+        message: "Nombre y un precio válido (mayor o igual a 0) son obligatorios",
         data: [],
         errors: [],
       });
     }
 
-    const newProduct = await ProductModel.create({ name, price, categoryId });
+    const newProduct = await ProductModel.create({ name, price: Number(price), categoryId });
     res.status(201).json({
       success: true,
       message: "Producto creado correctamente",
@@ -99,6 +99,14 @@ const createProduct = async (req, res) => {
       errors: [],
     });
   } catch (error) {
+    if (error.code === "ER_NO_REFERENCED_ROW_2" || error.code === "ER_NO_REFERENCED_ROW") {
+      return res.status(400).json({
+        success: false,
+        message: "La categoría indicada no existe",
+        data: [],
+        errors: [error.message],
+      });
+    }
     res.status(500).json({
       success: false,
       message: "Error al crear el producto",
@@ -119,7 +127,18 @@ const createProduct = async (req, res) => {
 const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const updatedProduct = await ProductModel.update(Number(id), req.body);
+    const { name, price, categoryId } = req.body;
+
+    if (price !== undefined && (isNaN(Number(price)) || Number(price) < 0)) {
+      return res.status(400).json({
+        success: false,
+        message: "El precio debe ser un número mayor o igual a 0",
+        data: [],
+        errors: [],
+      });
+    }
+
+    const updatedProduct = await ProductModel.update(Number(id), { name, price: price !== undefined ? Number(price) : price, categoryId });
     if (!updatedProduct) {
       return res.status(404).json({
         success: false,
@@ -135,6 +154,14 @@ const updateProduct = async (req, res) => {
       errors: [],
     });
   } catch (error) {
+    if (error.code === "ER_NO_REFERENCED_ROW_2" || error.code === "ER_NO_REFERENCED_ROW") {
+      return res.status(400).json({
+        success: false,
+        message: "La categoría indicada no existe",
+        data: [],
+        errors: [error.message],
+      });
+    }
     res.status(500).json({
       success: false,
       message: "Error al actualizar el producto",
