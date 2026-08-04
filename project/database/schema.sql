@@ -1,5 +1,6 @@
 -- Esquema de la base de datos: inventario_adso
 -- Ejecutar una sola vez: mysql -u root -p < project/database/schema.sql
+-- (Es idempotente: puede volver a ejecutarse sin duplicar datos)
 
 CREATE DATABASE IF NOT EXISTS inventario_adso;
 USE inventario_adso;
@@ -55,3 +56,66 @@ INSERT INTO products (id, name, price, category_id) VALUES
   (19, 'Hub USB-C 7 en 1', 50, 2),
   (20, 'Parlante Bluetooth Portátil', 40, 3)
 ON DUPLICATE KEY UPDATE name = VALUES(name), price = VALUES(price), category_id = VALUES(category_id);
+
+-- ==========================================================
+-- TABLA DE USUARIOS
+-- ==========================================================
+CREATE TABLE IF NOT EXISTS users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(150) NOT NULL UNIQUE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ==========================================================
+-- TABLA DE TAREAS (asignadas a un usuario)
+--   status: pendiente | en_progreso | completada
+--   Al eliminar un usuario, sus tareas quedan sin asignar
+--   (ON DELETE SET NULL) para conservar el historial.
+-- ==========================================================
+CREATE TABLE IF NOT EXISTS tasks (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(200) NOT NULL,
+  description TEXT,
+  status ENUM('pendiente', 'en_progreso', 'completada') DEFAULT 'pendiente',
+  user_id INT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+);
+
+-- ==========================================================
+-- TABLA DE PQRS
+--   type:   peticion | queja | reclamo | sugerencia
+--   status: abierta | en_proceso | cerrada
+-- ==========================================================
+CREATE TABLE IF NOT EXISTS pqrs (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  type ENUM('peticion', 'queja', 'reclamo', 'sugerencia') NOT NULL,
+  description TEXT NOT NULL,
+  status ENUM('abierta', 'en_proceso', 'cerrada') DEFAULT 'abierta',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Datos iniciales de usuarios
+INSERT INTO users (id, name, email) VALUES
+  (1, 'Ana Torres', 'ana.torres@mail.com'),
+  (2, 'Carlos Gómez', 'carlos.gomez@mail.com'),
+  (3, 'María López', 'maria.lopez@mail.com'),
+  (4, 'Juan Pérez', 'juan.perez@mail.com'),
+  (5, 'Laura Martínez', 'laura.martinez@mail.com')
+ON DUPLICATE KEY UPDATE name = VALUES(name), email = VALUES(email);
+
+-- Datos iniciales de tareas (asignadas a los usuarios anteriores)
+INSERT INTO tasks (id, title, description, status, user_id) VALUES
+  (1, 'Revisar inventario de periféricos', 'Verificar stock de mouse y teclados.', 'en_progreso', 2),
+  (2, 'Actualizar precios de laptops', 'Revisar listas y aplicar nuevos precios.', 'pendiente', 1),
+  (3, 'Atender reclamo de envío', 'Contactar al cliente y resolver el caso.', 'pendiente', 3),
+  (4, 'Generar reporte mensual', 'Consolidar ventas del mes.', 'completada', 4)
+ON DUPLICATE KEY UPDATE title = VALUES(title), status = VALUES(status), user_id = VALUES(user_id);
+
+-- Datos iniciales de PQRS
+INSERT INTO pqrs (id, type, description, status) VALUES
+  (1, 'sugerencia', 'Implementar búsqueda rápida de productos.', 'en_proceso'),
+  (2, 'reclamo', 'El monitor llegó con un píxel dañado.', 'abierta'),
+  (3, 'peticion', 'Solicitar información sobre garantías.', 'cerrada')
+ON DUPLICATE KEY UPDATE type = VALUES(type), description = VALUES(description), status = VALUES(status);
