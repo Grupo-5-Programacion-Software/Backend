@@ -30,6 +30,16 @@ app.get("/health", (req, res) => {
 app.use("/products", productRouter);
 app.use("/categories", categoryRouter);
 
+// Respuesta en formato JSON para rutas no definidas.
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: `Ruta no encontrada: ${req.method} ${req.originalUrl}`,
+    data: [],
+    errors: [],
+  });
+});
+
 const PORT = 3000;
 
 app.listen(PORT, "0.0.0.0", () => {
