@@ -18,10 +18,10 @@ import {
 const productRouter = Router();
 
 // Rutas CRUD de productos.
-productRouter.get("/", getAllProducts);
-productRouter.get("/:id", getProductById);
-productRouter.post("/", createProduct);
-productRouter.put("/:id", updateProduct);
-productRouter.delete("/:id", deleteProduct);
+productRouter.get("/", getAllProducts);             // Listar todos los productos
+productRouter.get("/:id", getProductById);          // Obtener un producto por ID
+productRouter.post("/", createProduct);             // Crear un producto
+productRouter.put("/:id", updateProduct);           // Actualizar un producto
+productRouter.delete("/:id", deleteProduct);        // Eliminar un producto
 
 export default productRouter;

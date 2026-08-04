@@ -55,4 +55,16 @@ Para que el sistema funcione correctamente, cada producto dentro del arreglo deb
 * **`id` (Número):** Es el identificador único. Funciona como la "cédula" del producto; no puede haber dos iguales. Es fundamental para las operaciones de búsqueda y eliminación.
 * **`name` (Texto):** El nombre descriptivo del artículo tecnológico.
 * **`price` (Número):** El costo del producto. Se maneja como número para poder realizar operaciones matemáticas (como sumas de totales o filtros de precios).
+* **`categoryId` (Número):** El identificador de la categoría a la que pertenece el producto. Sirve como clave foránea en memoria: vincula cada producto con su categoría dentro de `categories.data.js`.
+
+---
+
+#### **Estructura del Objeto "Categoría" (`categories.data.js`)**
+
+Cada categoría en el arreglo sigue el siguiente esquema:
+
+* **`id` (Número):** El identificador único de la categoría.
+* **`name` (Texto):** El nombre descriptivo de la categoría (por ejemplo, "Periféricos y Accesorios").
+
+**Integridad referencial:** un producto solo puede asociarse a una categoría que exista. Al crear o actualizar un producto se valida que el `categoryId` corresponda a una categoría registrada; en caso contrario, se lanza un error.
 

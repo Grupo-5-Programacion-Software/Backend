@@ -1,4 +1,3 @@
-
 import { CategoryModel } from "../models/category.model.js";
 import { ProductModel } from "../models/product.model.js";
 
@@ -10,9 +9,16 @@ import { ProductModel } from "../models/product.model.js";
  */
 
 // Obtiene todas las categorias registradas.
-const getAllCategories = (req, res) => {
+/**
+ * GET /categories
+ * Devuelve el listado completo de categorías almacenadas en la base de datos.
+ * @param {import("express").Request} req Petición HTTP entrante.
+ * @param {import("express").Response} res Respuesta HTTP saliente.
+ * @returns {void} Envía la lista de categorías o un error 500.
+ */
+const getAllCategories = async (req, res) => {
   try {
-    const categories = CategoryModel.findAll();
+    const categories = await CategoryModel.findAll();
     res.status(200).json({
       success: true,
       message: "Lista de categorías",
@@ -30,10 +36,17 @@ const getAllCategories = (req, res) => {
 };
 
 // Busca una categoria utilizando su identificador.
-const getCategoryById = (req, res) => {
+/**
+ * GET /categories/:id
+ * Busca una categoría por su ID y la devuelve si existe.
+ * @param {import("express").Request} req Contiene el parámetro de ruta `id`.
+ * @param {import("express").Response} res Respuesta HTTP saliente.
+ * @returns {void} Envía la categoría (200), 404 si no existe o 500 en error.
+ */
+const getCategoryById = async (req, res) => {
   try {
     const { id } = req.params;
-    const category = CategoryModel.findById(Number(id));
+    const category = await CategoryModel.findById(Number(id));
 
     if (!category) {
       return res.status(404).json({
@@ -60,7 +73,14 @@ const getCategoryById = (req, res) => {
 };
 
 // Crea una nueva categoria despues de validar los datos recibidos.
-const createCategory = (req, res) => {
+/**
+ * POST /categories
+ * Crea una categoría validando que el nombre sea obligatorio.
+ * @param {import("express").Request} req Contiene `name` en el cuerpo de la petición.
+ * @param {import("express").Response} res Respuesta HTTP saliente.
+ * @returns {void} Envía la categoría creada (201), 400 si falta el nombre o 500 en error.
+ */
+const createCategory = async (req, res) => {
   try {
     const { name } = req.body;
 
@@ -73,7 +93,7 @@ const createCategory = (req, res) => {
       });
     }
 
-    const newCategory = CategoryModel.create({ name });
+    const newCategory = await CategoryModel.create({ name });
     res.status(201).json({
       success: true,
       message: "Categoría creada correctamente",
@@ -91,10 +111,17 @@ const createCategory = (req, res) => {
 };
 
 // Actualiza la informacion de una categoria existente.
-const updateCategory = (req, res) => {
+/**
+ * PUT /categories/:id
+ * Actualiza los campos enviados de una categoría existente.
+ * @param {import("express").Request} req Contiene `id` en la ruta y campos en el cuerpo.
+ * @param {import("express").Response} res Respuesta HTTP saliente.
+ * @returns {void} Envía la categoría actualizada (200), 404 si no existe o 500 en error.
+ */
+const updateCategory = async (req, res) => {
   try {
     const { id } = req.params;
-    const updatedCategory = CategoryModel.update(Number(id), req.body);
+    const updatedCategory = await CategoryModel.update(Number(id), req.body);
 
     if (!updatedCategory) {
       return res.status(404).json({
@@ -121,11 +148,18 @@ const updateCategory = (req, res) => {
 };
 
 // Elimina una categoria siempre que no tenga productos asociados.
-const deleteCategory = (req, res) => {
+/**
+ * DELETE /categories/:id
+ * Elimina una categoría solo si existe y no tiene productos vinculados.
+ * @param {import("express").Request} req Contiene el parámetro de ruta `id`.
+ * @param {import("express").Response} res Respuesta HTTP saliente.
+ * @returns {void} Envía confirmación (200), 404 si no existe, 409 si tiene productos o 500 en error.
+ */
+const deleteCategory = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const categoryExists = CategoryModel.findById(Number(id));
+    const categoryExists = await CategoryModel.findById(Number(id));
     if (!categoryExists) {
       return res.status(404).json({
         success: false,
@@ -135,7 +169,7 @@ const deleteCategory = (req, res) => {
       });
     }
 
-    const linkedProducts = ProductModel.findByCategoryId(Number(id));
+    const linkedProducts = await ProductModel.findByCategoryId(Number(id));
     if (linkedProducts && linkedProducts.length > 0) {
       return res.status(409).json({
         success: false,
@@ -145,13 +179,13 @@ const deleteCategory = (req, res) => {
       });
     }
 
-    const isDeleted = CategoryModel.delete(Number(id));
+    const isDeleted = await CategoryModel.delete(Number(id));
     res.status(200).json({
       success: true,
       message: "Categoría eliminada correctamente",
       data: [],
       errors: [],
-    });    
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -159,15 +193,22 @@ const deleteCategory = (req, res) => {
       data: [],
       errors: [],
     });
-  } 
+  }
 };
 
 // Obtiene todos los productos pertenecientes a una categoria
-const getProductsByCategory = (req, res) => {
+/**
+ * GET /categories/:id/products
+ * Lista los productos asociados a una categoría específica.
+ * @param {import("express").Request} req Contiene el parámetro de ruta `id`.
+ * @param {import("express").Response} res Respuesta HTTP saliente.
+ * @returns {void} Envía los productos (200), 404 si la categoría no existe o 500 en error.
+ */
+const getProductsByCategory = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const categoryExists = CategoryModel.findById(Number(id));
+    const categoryExists = await CategoryModel.findById(Number(id));
     if (!categoryExists) {
       return res.status(404).json({
         success: false,
@@ -177,8 +218,8 @@ const getProductsByCategory = (req, res) => {
       });
     }
 
-    // 2. Buscar los productos
-    const products = ProductModel.findByCategoryId(Number(id));
+    // Busca los productos vinculados a la categoría.
+    const products = await ProductModel.findByCategoryId(Number(id));
     res.status(200).json({
       success: true,
       message: `Productos de la categoría: ${categoryExists.name}`,

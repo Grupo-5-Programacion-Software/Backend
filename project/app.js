@@ -30,8 +30,21 @@ app.get("/health", (req, res) => {
 app.use("/products", productRouter);
 app.use("/categories", categoryRouter);
 
-const PORT = 3000;
+// Respuesta en formato JSON para rutas no definidas.
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: `Ruta no encontrada: ${req.method} ${req.originalUrl}`,
+    data: [],
+    errors: [],
+  });
+});
+
+// El puerto se puede definir con la variable de entorno PORT.
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Servidor encendido en el puerto ${PORT}`);
 });
+
+export default app;
