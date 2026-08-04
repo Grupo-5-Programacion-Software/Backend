@@ -1,4 +1,3 @@
-
 import { CategoryModel } from "../models/category.model.js";
 import { ProductModel } from "../models/product.model.js";
 
@@ -12,14 +11,14 @@ import { ProductModel } from "../models/product.model.js";
 // Obtiene todas las categorias registradas.
 /**
  * GET /categories
- * Devuelve el listado completo de categorías almacenadas en memoria.
+ * Devuelve el listado completo de categorías almacenadas en la base de datos.
  * @param {import("express").Request} req Petición HTTP entrante.
  * @param {import("express").Response} res Respuesta HTTP saliente.
  * @returns {void} Envía la lista de categorías o un error 500.
  */
-const getAllCategories = (req, res) => {
+const getAllCategories = async (req, res) => {
   try {
-    const categories = CategoryModel.findAll();
+    const categories = await CategoryModel.findAll();
     res.status(200).json({
       success: true,
       message: "Lista de categorías",
@@ -44,10 +43,10 @@ const getAllCategories = (req, res) => {
  * @param {import("express").Response} res Respuesta HTTP saliente.
  * @returns {void} Envía la categoría (200), 404 si no existe o 500 en error.
  */
-const getCategoryById = (req, res) => {
+const getCategoryById = async (req, res) => {
   try {
     const { id } = req.params;
-    const category = CategoryModel.findById(Number(id));
+    const category = await CategoryModel.findById(Number(id));
 
     if (!category) {
       return res.status(404).json({
@@ -81,7 +80,7 @@ const getCategoryById = (req, res) => {
  * @param {import("express").Response} res Respuesta HTTP saliente.
  * @returns {void} Envía la categoría creada (201), 400 si falta el nombre o 500 en error.
  */
-const createCategory = (req, res) => {
+const createCategory = async (req, res) => {
   try {
     const { name } = req.body;
 
@@ -94,7 +93,7 @@ const createCategory = (req, res) => {
       });
     }
 
-    const newCategory = CategoryModel.create({ name });
+    const newCategory = await CategoryModel.create({ name });
     res.status(201).json({
       success: true,
       message: "Categoría creada correctamente",
@@ -119,10 +118,10 @@ const createCategory = (req, res) => {
  * @param {import("express").Response} res Respuesta HTTP saliente.
  * @returns {void} Envía la categoría actualizada (200), 404 si no existe o 500 en error.
  */
-const updateCategory = (req, res) => {
+const updateCategory = async (req, res) => {
   try {
     const { id } = req.params;
-    const updatedCategory = CategoryModel.update(Number(id), req.body);
+    const updatedCategory = await CategoryModel.update(Number(id), req.body);
 
     if (!updatedCategory) {
       return res.status(404).json({
@@ -156,11 +155,11 @@ const updateCategory = (req, res) => {
  * @param {import("express").Response} res Respuesta HTTP saliente.
  * @returns {void} Envía confirmación (200), 404 si no existe, 409 si tiene productos o 500 en error.
  */
-const deleteCategory = (req, res) => {
+const deleteCategory = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const categoryExists = CategoryModel.findById(Number(id));
+    const categoryExists = await CategoryModel.findById(Number(id));
     if (!categoryExists) {
       return res.status(404).json({
         success: false,
@@ -170,7 +169,7 @@ const deleteCategory = (req, res) => {
       });
     }
 
-    const linkedProducts = ProductModel.findByCategoryId(Number(id));
+    const linkedProducts = await ProductModel.findByCategoryId(Number(id));
     if (linkedProducts && linkedProducts.length > 0) {
       return res.status(409).json({
         success: false,
@@ -180,13 +179,13 @@ const deleteCategory = (req, res) => {
       });
     }
 
-    const isDeleted = CategoryModel.delete(Number(id));
+    const isDeleted = await CategoryModel.delete(Number(id));
     res.status(200).json({
       success: true,
       message: "Categoría eliminada correctamente",
       data: [],
       errors: [],
-    });    
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -194,7 +193,7 @@ const deleteCategory = (req, res) => {
       data: [],
       errors: [],
     });
-  } 
+  }
 };
 
 // Obtiene todos los productos pertenecientes a una categoria
@@ -205,11 +204,11 @@ const deleteCategory = (req, res) => {
  * @param {import("express").Response} res Respuesta HTTP saliente.
  * @returns {void} Envía los productos (200), 404 si la categoría no existe o 500 en error.
  */
-const getProductsByCategory = (req, res) => {
+const getProductsByCategory = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const categoryExists = CategoryModel.findById(Number(id));
+    const categoryExists = await CategoryModel.findById(Number(id));
     if (!categoryExists) {
       return res.status(404).json({
         success: false,
@@ -220,7 +219,7 @@ const getProductsByCategory = (req, res) => {
     }
 
     // Busca los productos vinculados a la categoría.
-    const products = ProductModel.findByCategoryId(Number(id));
+    const products = await ProductModel.findByCategoryId(Number(id));
     res.status(200).json({
       success: true,
       message: `Productos de la categoría: ${categoryExists.name}`,
