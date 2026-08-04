@@ -12,33 +12,14 @@ const ESTADOS_VALIDOS = ["pendiente", "en_progreso", "completada"];
 
 // GET /tasks
 /**
- * Devuelve el listado de tareas con su usuario asignado.
- * Acepta filtros opcionales en la URL:
- *   ?status=pendiente|en_progreso|completada
- *   ?userId=1
- *   ?q=texto (busca en título o descripción)
- * @param {import("express").Request} req Contiene los filtros en `req.query`.
+ * Devuelve el listado completo de tareas con su usuario asignado.
+ * @param {import("express").Request} req Petición HTTP entrante.
  * @param {import("express").Response} res Respuesta HTTP saliente.
- * @returns {void} Envía la lista de tareas (200), 400 si el estado es inválido o 500.
+ * @returns {void} Envía la lista de tareas (200) o error 500.
  */
 const getAllTasks = async (req, res) => {
   try {
-    const { status, userId, q } = req.query;
-
-    if (status && !ESTADOS_VALIDOS.includes(status)) {
-      return res.status(400).json({
-        success: false,
-        message: `Estado inválido. Válidos: ${ESTADOS_VALIDOS.join(", ")}`,
-        data: [],
-        errors: [],
-      });
-    }
-
-    const tasks = await TaskModel.findAll({
-      status,
-      userId: userId !== undefined ? Number(userId) : undefined,
-      q,
-    });
+    const tasks = await TaskModel.findAll();
     res.status(200).json({
       success: true,
       message: "Lista de tareas",
