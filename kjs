@@ -1,0 +1,158 @@
+[33mcommit 15ae9dbd82e150ddcf61aa6dd4ed7aa25411af26[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdevelop[m[33m, [m[1;31morigin/develop[m[33m)[m
+Merge: 5eddd35 180d5ab
+Author: julixnj31 <julixnj31@gmail.com>
+Date:   Mon Aug 3 21:32:24 2026 -0500
+
+    Merge pull request #12 from Grupo-5-Programacion-Software/yoinel
+    
+    Yoinel
+
+[33mcommit 180d5ab3e1a2357a27ca9da53d5fa8daeba1ed23[m
+Author: Yoinel Martinez <yoinelmartinez04@gmail.com>
+Date:   Mon Aug 3 21:03:20 2026 -0500
+
+    fix(controllers): validar precio y responder 400 ante categoria inexistente en productos
+
+[33mcommit 0e186527c3c1ee7a5b6c533d9c1a8cc1cd6e9aba[m
+Author: Yoinel Martinez <yoinelmartinez04@gmail.com>
+Date:   Mon Aug 3 20:57:49 2026 -0500
+
+    docs: actualizar README con integracion MySQL y configuracion de la BD
+
+[33mcommit 1e2ec4611c15b71caa4deed34eed8472fa54485e[m
+Author: Yoinel Martinez <yoinelmartinez04@gmail.com>
+Date:   Mon Aug 3 20:56:54 2026 -0500
+
+    chore(deps): agregar dependencias mysql2 y dotenv para conexion a MySQL
+
+[33mcommit a50fd7a14ce56edeb5ae3c02f775f494fc4a1720[m
+Author: Yoinel Martinez <yoinelmartinez04@gmail.com>
+Date:   Mon Aug 3 20:56:41 2026 -0500
+
+    refactor(db): renombrar base de datos a inventario_adso
+
+[33mcommit 8d64404fd32364c46d9bd2258ce76d9c17356b89[m
+Author: Yoinel Martinez <yoinelmartinez04@gmail.com>
+Date:   Mon Aug 3 20:55:53 2026 -0500
+
+    feat(controllers): adaptar controladores a consultas async con MySQL
+
+[33mcommit 87522fe0c5976dedd7f176577463cf4d5b9756c6[m
+Author: Yoinel Martinez <yoinelmartinez04@gmail.com>
+Date:   Mon Aug 3 20:54:17 2026 -0500
+
+    feat(models): migrar modelos de memoria a consultas MySQL con promesas
+
+[33mcommit 374ce2a1958e0b62d4ec8a3c7f01919352a52dfe[m
+Author: Yoinel Martinez <yoinelmartinez04@gmail.com>
+Date:   Mon Aug 3 20:53:40 2026 -0500
+
+    feat(db): agregar conexion MySQL con pool, .env y esquema con datos iniciales
+
+[33mcommit 7764fb7396a24462bce322d01ce06720ce13cc94[m
+Author: Yoinel Martinez <yoinelmartinez04@gmail.com>
+Date:   Mon Aug 3 20:51:57 2026 -0500
+
+    chore: proteger credenciales agregando .env al gitignore
+
+[33mcommit 2dc36c2feeac2a2b64de564ebac532525bf2bbc8[m
+Author: Yoinel Martinez <yoinelmartinez04@gmail.com>
+Date:   Mon Aug 3 20:07:17 2026 -0500
+
+    docs(data): documentar campo categoryId y estructura de categorias en README
+
+[33mcommit 24a82d532e6a4eb37333781a55ec01b8d3b82285[m
+Author: Yoinel Martinez <yoinelmartinez04@gmail.com>
+Date:   Mon Aug 3 20:07:05 2026 -0500
+
+    feat(app): leer puerto desde variable de entorno PORT y exportar la app para testing
+
+[33mcommit 61210b5a159e640845973a53a2972e90d5ce50bd[m
+Author: Yoinel Martinez <yoinelmartinez04@gmail.com>
+Date:   Mon Aug 3 20:06:50 2026 -0500
+
+    feat(app): agregar middleware 404 para rutas no encontradas en formato JSON
+
+[33mcommit bd0db8549dc5e4275bab810f0c25251681ab6813[m
+Author: Yoinel Martinez <yoinelmartinez04@gmail.com>
+Date:   Mon Aug 3 20:06:34 2026 -0500
+
+    fix(models): asignar IDs sin colisiones usando max+1 en vez de length+1
+
+[33mcommit 3c0713b4d2ad256d387c107d109af7525e33fd5c[m
+Author: Yoinel Martinez <yoinelmartinez04@gmail.com>
+Date:   Mon Aug 3 19:59:10 2026 -0500
+
+    docs(models, routes): documentar metodos de los modelos y endpoints de las rutas con JSDoc
+
+[33mcommit a39084b3a835da07f32178fb9597715c15737b1a[m
+Author: Yoinel Martinez <yoinelmartinez04@gmail.com>
+Date:   Mon Aug 3 19:58:25 2026 -0500
+
+    docs(controllers): documentar controladores con JSDoc y corregir comentario huerfano
+
+[33mcommit 5eddd352e87e3296e502232b9ef0214c7195e480[m
+Merge: 88189ff d49c00c
+Author: se-26 <selenamolinafigueroa26@gmail.com>
+Date:   Thu Jul 30 21:56:40 2026 -0500
+
+    Merge pull request #8 from Grupo-5-Programacion-Software/feat/selena
+    
+    Feat/selena
+
+[33mcommit d49c00c1804e6ec83752962bfaeeb17b0353a446[m
+Author: selena <selenamolinafigueroa26@gmail.com>
+Date:   Thu Jul 30 21:07:10 2026 -0500
+
+    docs: mejorar README del backend
+
+[33mcommit 75546fbe3689dd50414966bd6641cba45ddd3a12[m
+Author: selena <selenamolinafigueroa26@gmail.com>
+Date:   Thu Jul 30 19:58:41 2026 -0500
+
+    docs: documentar rutas de la API
+
+[33mcommit c81c335729b8a8dacea99983501654a3d321762a[m
+Author: selena <selenamolinafigueroa26@gmail.com>
+Date:   Thu Jul 30 19:53:13 2026 -0500
+
+    docs: documentar modelos
+
+[33mcommit b75d0dfbaa613b9e449b5a2368b4826daf81663a[m
+Author: selena <selenamolinafigueroa26@gmail.com>
+Date:   Thu Jul 30 16:38:37 2026 -0500
+
+    docs: documentar controladores
+
+[33mcommit 88189ff710512befa2ebad0e123209cbe744d2ed[m[33m ([m[1;31morigin/feat/mejoras-backend[m[33m, [m[1;32mfeat/mejoras-backend[m[33m)[m
+Author: Julian <julixnj31@gmail.com>
+Date:   Thu Jul 30 10:49:50 2026 -0500
+
+    feat(models): agregar validacion de existencia de categoria al crear y actualizar productos
+    
+    - ProductModel.create valida que categoryId exista en categorias
+    - ProductModel.update valida categoryId si se proporciona
+    - Eliminar comentarios inline del codigo para cumplir estandar de limpieza
+    - CategoryModel.create y update tambien limpian comentarios
+
+[33mcommit c0990774b8a44e49f52571d88d88a02ab57ac594[m
+Author: Julian <julixnj31@gmail.com>
+Date:   Thu Jul 30 10:48:51 2026 -0500
+
+    fix(controllers): agregar manejo de errores con try/catch en todas las funciones de controladores
+    
+    - getAllProducts, createProduct, updateProduct ahora tienen try/catch
+    - getAllCategories, createCategory, updateCategory ahora tienen try/catch
+    - createProduct ahora acepta categoryId del body
+
+[33mcommit cef35c090a56b6bc7ce2b430d9e63201090b4a06[m
+Author: Julian <julixnj31@gmail.com>
+Date:   Thu Jul 30 10:48:19 2026 -0500
+
+    fix(api): corregir typo en propiedad messaje por message y agregar endpoint de salud /health
+
+[33mcommit f038a9411cd4dc10bdb5726495961d3ee360711f[m
+Author: Yoinel Martinez <yoinelmartinez04@gmail.com>
+Date:   Tue Jul 28 09:25:50 2026 -0500
+
+    feat: CRUD de categorias y productos con arquitectura en capas
