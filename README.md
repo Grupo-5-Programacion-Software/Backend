@@ -68,8 +68,10 @@ mysql -u root -p < project/database/schema.sql
 ## ▶️ Ejecución
 
 ```bash
-npm start
+npm start        # o npm run dev (ambos usan nodemon)
 ```
+
+El servidor queda escuchando en `http://localhost:3000`.
 
 ## 🔌 Endpoints
 
@@ -84,6 +86,13 @@ npm start
 | DELETE | `/categories/:id` | Eliminar categoría (solo si no tiene productos) |
 | GET | `/categories/:id/products` | Obtener productos de una categoría |
 
+```bash
+# Crear una categoría
+curl -X POST http://localhost:3000/categories \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Accesorios"}'
+```
+
 ### Productos
 
 | Método | Ruta | Descripción |
@@ -94,6 +103,13 @@ npm start
 | PUT | `/products/:id` | Actualizar un producto |
 | DELETE | `/products/:id` | Eliminar un producto |
 
+```bash
+# Crear un producto (el código PRD-NNN se genera automáticamente)
+curl -X POST http://localhost:3000/products \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Mouse Gamer", "price": 45.90, "stock": 12, "categoryId": 2}'
+```
+
 ### Usuarios
 
 | Método | Ruta | Descripción |
@@ -103,6 +119,13 @@ npm start
 | POST | `/users` | Crear un usuario (`name`, `email`) |
 | PUT | `/users/:id` | Actualizar un usuario |
 | DELETE | `/users/:id` | Eliminar un usuario |
+
+```bash
+# Crear un usuario
+curl -X POST http://localhost:3000/users \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Ana Torres", "email": "ana.torres@mail.com"}'
+```
 
 ### Tareas (asignación a usuarios)
 
@@ -117,6 +140,18 @@ npm start
 
 Estados de tarea: `pendiente`, `en_progreso`, `completada`.
 
+```bash
+# Crear una tarea asignada a un usuario existente
+curl -X POST http://localhost:3000/tasks \
+  -H "Content-Type: application/json" \
+  -d '{"title": "Revisar stock", "description": "Auditoría mensual", "userId": 2}'
+
+# Cambiar el estado de una tarea
+curl -X PATCH http://localhost:3000/tasks/1 \
+  -H "Content-Type: application/json" \
+  -d '{"status": "completada"}'
+```
+
 ### PQRS
 
 | Método | Ruta | Descripción |
@@ -129,11 +164,27 @@ Estados de tarea: `pendiente`, `en_progreso`, `completada`.
 
 Tipos de PQRS: `peticion`, `queja`, `reclamo`, `sugerencia`.
 
+```bash
+# Enviar una solicitud
+curl -X POST http://localhost:3000/pqrs \
+  -H "Content-Type: application/json" \
+  -d '{"type": "reclamo", "description": "El teclado llegó dañado"}'
+
+# Cambiar el estado de una solicitud
+curl -X PATCH http://localhost:3000/pqrs/1 \
+  -H "Content-Type: application/json" \
+  -d '{"status": "en_proceso"}'
+```
+
 ### Panel Administrativo
 
 | Método | Ruta | Descripción |
 |--------|------|-------------|
 | GET | `/admin/stats` | Conteos de usuarios, tareas y PQRS |
+
+```bash
+curl http://localhost:3000/admin/stats
+```
 
 ## 🧪 Reglas de Integridad
 
@@ -144,6 +195,8 @@ Tipos de PQRS: `peticion`, `queja`, `reclamo`, `sugerencia`.
 
 ## 📋 Formato de Respuesta
 
+Todas las respuestas (éxito y error) usan la misma estructura:
+
 ```json
 {
   "success": true,
@@ -152,3 +205,21 @@ Tipos de PQRS: `peticion`, `queja`, `reclamo`, `sugerencia`.
   "errors": []
 }
 ```
+
+- `success`: `true` si la operación fue exitosa, `false` si falló.
+- `message`: descripción legible del resultado.
+- `data`: resultado de la operación (objeto, arreglo o `[]`).
+- `errors`: mensajes de error detallados (vacío si no hubo).
+
+## 🔗 Integración con el Frontend
+
+El frontend (Vite) consume esta API mediante un **proxy**: en desarrollo,
+las peticiones que empiezan por `/api` se redirigen a `http://localhost:3000`
+y se les quita el prefijo `/api`. Por eso desde el navegador basta usar
+`/api/users`, `/api/products`, etc. sin preocuparse por CORS.
+
+Pasos para probar el sistema completo:
+
+1. Levantar el backend: `npm start` (puerto 3000).
+2. Levantar el frontend: `npm run dev` en el repositorio `Frontend` (puerto 5173).
+3. Abrir `http://localhost:5173` y navegar entre las pestañas del sistema.
