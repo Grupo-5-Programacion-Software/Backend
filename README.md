@@ -1,11 +1,12 @@
 # Backend - API de Gestión de Categorías y Productos
 
-API REST construida con **Node.js + Express** siguiendo **Arquitectura en Capas** con persistencia en memoria.
+API REST construida con **Node.js + Express** siguiendo **Arquitectura en Capas** con persistencia en **MySQL**.
 
 ## 🚀 Tecnologías
 
 - Node.js
 - Express 5
+- MySQL 8 (mysql2)
 - Nodemon (desarrollo)
 
 ## 📁 Estructura del Proyecto
@@ -13,6 +14,8 @@ API REST construida con **Node.js + Express** siguiendo **Arquitectura en Capas*
 ```
 project/
 ├── app.js                     # Configuración de Express y rutas
+├── config/
+│   └── db.js                  # Configuración y pool de conexión a MySQL
 ├── controllers/               # Manejo de peticiones y respuestas HTTP
 │   ├── category.controller.js
 │   └── product.controller.js
@@ -22,15 +25,33 @@ project/
 ├── routes/                    # Definición de rutas y endpoints
 │   ├── category.routes.js
 │   └── product.routes.js
-└── data/                      # Fuente de datos (arreglos en memoria)
-    ├── categories.data.js
-    └── products.data.js
+└── database/
+    └── schema.sql             # Creación de la BD, tablas y datos iniciales
 ```
 
 ## 📦 Instalación
 
 ```bash
 npm install
+```
+
+## 🗄️ Configurar la base de datos
+
+Copia el archivo `.env.example` a `.env` y completa las credenciales de tu MySQL:
+
+```bash
+cp .env.example .env
+```
+
+Crea la base de datos, las tablas y los datos iniciales:
+
+```bash
+mysql -u root -p < project/database/schema.sql
+```
+
+## ▶️ Ejecución
+
+```bash
 npm start
 ```
 
