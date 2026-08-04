@@ -10,6 +10,13 @@ import { ProductModel } from "../models/product.model.js";
  */
 
 // Obtiene todas las categorias registradas.
+/**
+ * GET /categories
+ * Devuelve el listado completo de categorías almacenadas en memoria.
+ * @param {import("express").Request} req Petición HTTP entrante.
+ * @param {import("express").Response} res Respuesta HTTP saliente.
+ * @returns {void} Envía la lista de categorías o un error 500.
+ */
 const getAllCategories = (req, res) => {
   try {
     const categories = CategoryModel.findAll();
@@ -30,6 +37,13 @@ const getAllCategories = (req, res) => {
 };
 
 // Busca una categoria utilizando su identificador.
+/**
+ * GET /categories/:id
+ * Busca una categoría por su ID y la devuelve si existe.
+ * @param {import("express").Request} req Contiene el parámetro de ruta `id`.
+ * @param {import("express").Response} res Respuesta HTTP saliente.
+ * @returns {void} Envía la categoría (200), 404 si no existe o 500 en error.
+ */
 const getCategoryById = (req, res) => {
   try {
     const { id } = req.params;
@@ -60,6 +74,13 @@ const getCategoryById = (req, res) => {
 };
 
 // Crea una nueva categoria despues de validar los datos recibidos.
+/**
+ * POST /categories
+ * Crea una categoría validando que el nombre sea obligatorio.
+ * @param {import("express").Request} req Contiene `name` en el cuerpo de la petición.
+ * @param {import("express").Response} res Respuesta HTTP saliente.
+ * @returns {void} Envía la categoría creada (201), 400 si falta el nombre o 500 en error.
+ */
 const createCategory = (req, res) => {
   try {
     const { name } = req.body;
@@ -91,6 +112,13 @@ const createCategory = (req, res) => {
 };
 
 // Actualiza la informacion de una categoria existente.
+/**
+ * PUT /categories/:id
+ * Actualiza los campos enviados de una categoría existente.
+ * @param {import("express").Request} req Contiene `id` en la ruta y campos en el cuerpo.
+ * @param {import("express").Response} res Respuesta HTTP saliente.
+ * @returns {void} Envía la categoría actualizada (200), 404 si no existe o 500 en error.
+ */
 const updateCategory = (req, res) => {
   try {
     const { id } = req.params;
@@ -121,6 +149,13 @@ const updateCategory = (req, res) => {
 };
 
 // Elimina una categoria siempre que no tenga productos asociados.
+/**
+ * DELETE /categories/:id
+ * Elimina una categoría solo si existe y no tiene productos vinculados.
+ * @param {import("express").Request} req Contiene el parámetro de ruta `id`.
+ * @param {import("express").Response} res Respuesta HTTP saliente.
+ * @returns {void} Envía confirmación (200), 404 si no existe, 409 si tiene productos o 500 en error.
+ */
 const deleteCategory = (req, res) => {
   try {
     const { id } = req.params;
@@ -163,6 +198,13 @@ const deleteCategory = (req, res) => {
 };
 
 // Obtiene todos los productos pertenecientes a una categoria
+/**
+ * GET /categories/:id/products
+ * Lista los productos asociados a una categoría específica.
+ * @param {import("express").Request} req Contiene el parámetro de ruta `id`.
+ * @param {import("express").Response} res Respuesta HTTP saliente.
+ * @returns {void} Envía los productos (200), 404 si la categoría no existe o 500 en error.
+ */
 const getProductsByCategory = (req, res) => {
   try {
     const { id } = req.params;
@@ -177,7 +219,7 @@ const getProductsByCategory = (req, res) => {
       });
     }
 
-    // 2. Buscar los productos
+    // Busca los productos vinculados a la categoría.
     const products = ProductModel.findByCategoryId(Number(id));
     res.status(200).json({
       success: true,
