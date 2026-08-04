@@ -80,7 +80,7 @@ PORT=3000
 
 > Nota: si la contraseña comienza con `#`, debe ir entre comillas.
 
-La base de datos se crea automáticamente al ejecutar `npm run dev` o `npm start` (el script `src/scripts/initDb.js` crea la BD, las tablas y los datos semilla si faltan). Solo si prefieres crearla manualmente:
+Prepara la base de datos (crea tablas que falten y datos base, sin sobrescribir lo existente):
 
 ```bash
 mysql -u root -p < src/database/schema.sql
@@ -139,24 +139,24 @@ Cliente (frontend/curl)
 3. `user.routes.js` dirige a `createUser` en `user.controller.js`.
 4. El controller valida que `name` y `email` existan y que el correo tenga formato válido (400 si falla).
 5. `UserModel.findByEmail()` verifica duplicados (409 si ya existe).
-6. `UserModel.create()` ejecuta `INSERT INTO usuarios (name, email, password) VALUES (?, ?, ?)`.
+6. `UserModel.create()` ejecuta `INSERT INTO users (name, email, password) VALUES (?, ?, ?)`.
 7. El controller responde `201` con el usuario creado; el frontend muestra la notificación y re-renderiza la tabla sin recargar.
 
 ## 7. Esquema de base de datos
 
-El archivo `src/database/schema.sql` usa `CREATE TABLE IF NOT EXISTS` e `INSERT IGNORE`, por lo que **no sobrescribe** una base de datos ya existente. Las tablas están en español: `categorias`, `productos`, `usuarios`, `tareas` y `pqrs`.
+El archivo `src/database/schema.sql` usa `CREATE TABLE IF NOT EXISTS` e `INSERT IGNORE`, por lo que **no sobrescribe** una base de datos ya existente.
 
 Relaciones entre tablas:
 
 ```text
-categorias 1 --- N productos     (category_id, FK)
-usuarios   1 --- N tareas        (user_id, FK con ON DELETE SET NULL)
-pqrs                              (tabla independiente)
+categories 1 --- N products        (category_id, FK)
+users      1 --- N tasks           (user_id, FK con ON DELETE SET NULL)
+pqrs                               (tabla independiente)
 ```
 
-- `productos.category_id` → referencia `categorias(id)`: no se puede borrar una categoría con productos asociados.
-- `tareas.user_id` → referencia `usuarios(id)` con `ON DELETE SET NULL`: al eliminar un usuario, sus tareas conservan el historial pero quedan sin asignar.
-- `usuarios.email` es `UNIQUE`: garantiza que no haya correos duplicados.
+- `products.category_id` → referencia `categories(id)`: no se puede borrar una categoría con productos asociados.
+- `tasks.user_id` → referencia `users(id)` con `ON DELETE SET NULL`: al eliminar un usuario, sus tareas conservan el historial pero quedan sin asignar.
+- `users.email` es `UNIQUE`: garantiza que no haya correos duplicados.
 - `tasks.status` es `ENUM('pendiente','en_progreso','completada')`; `pqrs.type` y `pqrs.status` también usan `ENUM` para restringir los valores.
 
 El script también inserta datos semilla: 8 categorías, 3 usuarios de demostración, tareas y PQRS de ejemplo.
