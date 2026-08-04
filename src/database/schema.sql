@@ -1,16 +1,30 @@
--- Esquema de la base de datos: inventario_adso
+-- ============================================================
+-- ESQUEMA DE LA BASE DE DATOS: inventario_adso
+-- ============================================================
+-- Todas las tablas usan nombres en español para que coincidan
+-- con el backend (src/models):
+--
+--   categorias  -> src/models/category.model.js
+--   productos   -> src/models/product.model.js
+--   usuarios    -> src/models/user.model.js
+--   tareas      -> src/models/task.model.js
+--   pqrs        -> src/models/pqrs.model.js
+--
 -- Este script respeta una base de datos ya existente: solo crea
 -- las tablas que falten (CREATE TABLE IF NOT EXISTS) y sus datos
 -- semilla usan INSERT IGNORE para no sobrescribir registros reales.
--- Ejecutar: mysql -u root -p < src/database/schema.sql
+-- Se ejecuta automáticamente al iniciar con `npm run dev` o `npm start`
+-- (ver src/scripts/initDb.js).
+-- Ejecutar manualmente: mysql -u root -p < src/database/schema.sql
+-- ============================================================
 
 CREATE DATABASE IF NOT EXISTS inventario_adso;
 USE inventario_adso;
 
 -- ==========================================================
--- TABLA DE CATEGORÍAS (ya existe en la BD: no se modifica)
+-- TABLA DE CATEGORÍAS
 -- ==========================================================
-CREATE TABLE IF NOT EXISTS categories (
+CREATE TABLE IF NOT EXISTS categorias (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(100) NOT NULL UNIQUE,
   description TEXT,
@@ -19,9 +33,11 @@ CREATE TABLE IF NOT EXISTS categories (
 );
 
 -- ==========================================================
--- TABLA DE PRODUCTOS (ya existe en la BD: no se modifica)
+-- TABLA DE PRODUCTOS
+--   code: código interno generado por el backend (PRD-NNN)
+--   category_id: clave foránea hacia categorias
 -- ==========================================================
-CREATE TABLE IF NOT EXISTS products (
+CREATE TABLE IF NOT EXISTS productos (
   id INT AUTO_INCREMENT PRIMARY KEY,
   code VARCHAR(50) NOT NULL,
   name VARCHAR(150) NOT NULL,
@@ -32,13 +48,13 @@ CREATE TABLE IF NOT EXISTS products (
   is_active TINYINT(1) NOT NULL DEFAULT 1,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  FOREIGN KEY (category_id) REFERENCES categories(id)
+  FOREIGN KEY (category_id) REFERENCES categorias(id)
 );
 
 -- ==========================================================
--- TABLA DE USUARIOS (ya existe en la BD: no se modifica)
+-- TABLA DE USUARIOS
 -- ==========================================================
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE IF NOT EXISTS usuarios (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
   email VARCHAR(150) NOT NULL UNIQUE,
@@ -49,23 +65,23 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 -- ==========================================================
--- TABLA DE TAREAS (nueva)
+-- TABLA DE TAREAS
 --   status: pendiente | en_progreso | completada
 --   Al eliminar un usuario, sus tareas quedan sin asignar
 --   (ON DELETE SET NULL) para conservar el historial.
 -- ==========================================================
-CREATE TABLE IF NOT EXISTS tasks (
+CREATE TABLE IF NOT EXISTS tareas (
   id INT AUTO_INCREMENT PRIMARY KEY,
   title VARCHAR(200) NOT NULL,
   description TEXT,
   status ENUM('pendiente', 'en_progreso', 'completada') DEFAULT 'pendiente',
   user_id INT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+  FOREIGN KEY (user_id) REFERENCES usuarios(id) ON DELETE SET NULL
 );
 
 -- ==========================================================
--- TABLA DE PQRS (nueva)
+-- TABLA DE PQRS (Peticiones, Quejas, Reclamos y Sugerencias)
 --   type:   peticion | queja | reclamo | sugerencia
 --   status: abierta | en_proceso | cerrada
 -- ==========================================================
@@ -82,7 +98,7 @@ CREATE TABLE IF NOT EXISTS pqrs (
 -- ==========================================================
 
 -- Categorías base (se omiten las que ya existan).
-INSERT IGNORE INTO categories (id, name, description) VALUES
+INSERT IGNORE INTO categorias (id, name, description) VALUES
   (1, 'Laptops y Computadoras', 'Computadores portátiles y de escritorio'),
   (2, 'Periféricos', 'Mouse, teclados y accesorios'),
   (3, 'Monitores y Pantallas', 'Monitores y displays'),
@@ -93,20 +109,20 @@ INSERT IGNORE INTO categories (id, name, description) VALUES
   (8, 'Impresoras y Escáneres', 'Equipos de impresión');
 
 -- Usuarios de demostración (requieren password, obligatorio en la BD).
-INSERT IGNORE INTO users (id, name, email, password) VALUES
+INSERT IGNORE INTO usuarios (id, name, email, password) VALUES
   (1, 'Lucia Lizcano', 'lulizcano.aa@hotmail.com', 'cambiar123'),
   (2, 'Juan Perez', 'juan@gmail.com', 'cambiar123'),
   (3, 'Prueba', 'prueba@gmail.com', 'cambiar123');
 
--- Tareas de ejemplo (tabla nueva: siempre se insertan).
-INSERT INTO tasks (title, description, status, user_id) VALUES
-  ('Revisar inventario de periféricos', 'Verificar stock de mouse y teclados.', 'en_progreso', 2),
-  ('Actualizar precios de laptops', 'Revisar listas y aplicar nuevos precios.', 'pendiente', 1),
-  ('Atender reclamo de envío', 'Contactar al cliente y resolver el caso.', 'pendiente', 3),
-  ('Generar reporte mensual', 'Consolidar ventas del mes.', 'completada', 1);
+-- Tareas de ejemplo (INSERT IGNORE con ID explícito: no se duplican).
+INSERT IGNORE INTO tareas (id, title, description, status, user_id) VALUES
+  (1, 'Revisar inventario de periféricos', 'Verificar stock de mouse y teclados.', 'en_progreso', 2),
+  (2, 'Actualizar precios de laptops', 'Revisar listas y aplicar nuevos precios.', 'pendiente', 1),
+  (3, 'Atender reclamo de envío', 'Contactar al cliente y resolver el caso.', 'pendiente', 3),
+  (4, 'Generar reporte mensual', 'Consolidar ventas del mes.', 'completada', 1);
 
--- Solicitudes PQRS de ejemplo (tabla nueva: siempre se insertan).
-INSERT INTO pqrs (type, description, status) VALUES
-  ('sugerencia', 'Implementar búsqueda rápida de productos.', 'en_proceso'),
-  ('reclamo', 'El monitor llegó con un píxel dañado.', 'abierta'),
-  ('peticion', 'Solicitar información sobre garantías.', 'cerrada');
+-- Solicitudes PQRS de ejemplo (INSERT IGNORE con ID explícito: no se duplican).
+INSERT IGNORE INTO pqrs (id, type, description, status) VALUES
+  (1, 'sugerencia', 'Implementar búsqueda rápida de productos.', 'en_proceso'),
+  (2, 'reclamo', 'El monitor llegó con un píxel dañado.', 'abierta'),
+  (3, 'peticion', 'Solicitar información sobre garantías.', 'cerrada');

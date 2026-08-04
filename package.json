@@ -4,6 +4,8 @@
   "description": "API REST de gestion de inventario (categorias, productos, usuarios, tareas, PQRS) construida con Node.js y Express.",
   "main": "src/app.js",
   "scripts": {
+    "predev": "node src/scripts/initDb.js",
+    "prestart": "node src/scripts/initDb.js",
     "start": "node src/app.js",
     "dev": "nodemon src/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"

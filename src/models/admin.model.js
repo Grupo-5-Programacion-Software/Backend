@@ -12,8 +12,8 @@ export const AdminModel = {
    * @returns {Promise<{users: number, tasks: number, pqrs: number}>} Estadísticas globales.
    */
   getStats: async () => {
-    const [[users]] = await pool.query("SELECT COUNT(*) AS total FROM users");
-    const [[tasks]] = await pool.query("SELECT COUNT(*) AS total FROM tasks");
+    const [[users]] = await pool.query("SELECT COUNT(*) AS total FROM usuarios");
+    const [[tasks]] = await pool.query("SELECT COUNT(*) AS total FROM tareas");
     const [[pqrs]] = await pool.query("SELECT COUNT(*) AS total FROM pqrs");
 
     return {

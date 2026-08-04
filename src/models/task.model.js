@@ -18,8 +18,8 @@ export const TaskModel = {
     const [rows] = await pool.query(
       `SELECT t.id, t.title, t.description, t.status,
               t.user_id AS userId, u.name AS userName
-       FROM tasks t
-       LEFT JOIN users u ON u.id = t.user_id
+       FROM tareas t
+       LEFT JOIN usuarios u ON u.id = t.user_id
        ORDER BY t.id`
     );
     return rows;
@@ -34,8 +34,8 @@ export const TaskModel = {
     const [rows] = await pool.query(
       `SELECT t.id, t.title, t.description, t.status,
               t.user_id AS userId, u.name AS userName
-       FROM tasks t
-       LEFT JOIN users u ON u.id = t.user_id
+       FROM tareas t
+       LEFT JOIN usuarios u ON u.id = t.user_id
        WHERE t.id = ?`,
       [id]
     );
@@ -50,7 +50,7 @@ export const TaskModel = {
    */
   create: async (newTask) => {
     const [result] = await pool.query(
-      "INSERT INTO tasks (title, description, user_id) VALUES (?, ?, ?)",
+      "INSERT INTO tareas (title, description, user_id) VALUES (?, ?, ?)",
       [newTask.title, newTask.description || null, newTask.userId || null]
     );
     return {
@@ -70,7 +70,7 @@ export const TaskModel = {
    */
   update: async (id, updatedFields) => {
     const [result] = await pool.query(
-      `UPDATE tasks
+      `UPDATE tareas
        SET title = ?, description = ?, status = ?, user_id = ?
        WHERE id = ?`,
       [
@@ -99,7 +99,7 @@ export const TaskModel = {
     const values = fields.map((field) => partialFields[field]);
 
     const [result] = await pool.query(
-      `UPDATE tasks SET ${sets} WHERE id = ?`,
+      `UPDATE tareas SET ${sets} WHERE id = ?`,
       [...values, id]
     );
     if (result.affectedRows === 0) return null;
@@ -112,7 +112,7 @@ export const TaskModel = {
    * @returns {Promise<boolean>} `true` si se eliminó, `false` si no existía.
    */
   delete: async (id) => {
-    const [result] = await pool.query("DELETE FROM tasks WHERE id = ?", [id]);
+    const [result] = await pool.query("DELETE FROM tareas WHERE id = ?", [id]);
     return result.affectedRows > 0;
   },
 };

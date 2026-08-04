@@ -14,7 +14,7 @@ export const CategoryModel = {
    * @returns {Promise<Array<{id: number, name: string}>>} Las categorías registradas.
    */
   findAll: async () => {
-    const [rows] = await pool.query("SELECT id, name FROM categories ORDER BY id");
+    const [rows] = await pool.query("SELECT id, name FROM categorias ORDER BY id");
     return rows;
   },
 
@@ -24,7 +24,7 @@ export const CategoryModel = {
    * @returns {Promise<object|undefined>} La categoría encontrada o `undefined` si no existe.
    */
   findById: async (id) => {
-    const [rows] = await pool.query("SELECT id, name FROM categories WHERE id = ?", [id]);
+    const [rows] = await pool.query("SELECT id, name FROM categorias WHERE id = ?", [id]);
     return rows[0];
   },
 
@@ -35,7 +35,7 @@ export const CategoryModel = {
    * @throws {Error} Si el nombre ya está registrado o es inválido.
    */
   create: async (newCategory) => {
-    const [result] = await pool.query("INSERT INTO categories (name) VALUES (?)", [newCategory.name]);
+    const [result] = await pool.query("INSERT INTO categorias (name) VALUES (?)", [newCategory.name]);
     return { id: result.insertId, name: newCategory.name };
   },
 
@@ -46,7 +46,7 @@ export const CategoryModel = {
    * @returns {Promise<object|null>} La categoría actualizada o `null` si no existe.
    */
   update: async (id, updatedFields) => {
-    const [result] = await pool.query("UPDATE categories SET name = ? WHERE id = ?", [updatedFields.name, id]);
+    const [result] = await pool.query("UPDATE categorias SET name = ? WHERE id = ?", [updatedFields.name, id]);
     if (result.affectedRows === 0) return null;
     return { id, name: updatedFields.name };
   },
@@ -57,7 +57,7 @@ export const CategoryModel = {
    * @returns {Promise<boolean>} `true` si se eliminó, `false` si no existía.
    */
   delete: async (id) => {
-    const [result] = await pool.query("DELETE FROM categories WHERE id = ?", [id]);
+    const [result] = await pool.query("DELETE FROM categorias WHERE id = ?", [id]);
     return result.affectedRows > 0;
   },
 };
