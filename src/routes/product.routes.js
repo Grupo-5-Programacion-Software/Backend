@@ -7,14 +7,13 @@ import {
   updateProduct,
   deleteProduct,
 } from "../controllers/product.controller.js";
+
 /**
  * Rutas para la gestión de productos.
  *
  * Define los endpoints encargados de consultar, crear,
  * actualizar y eliminar productos del sistema.
  */
-
-
 const productRouter = Router();
 
 // Rutas CRUD de productos.

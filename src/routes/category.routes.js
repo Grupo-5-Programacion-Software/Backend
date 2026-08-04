@@ -7,6 +7,7 @@ import {
   deleteCategory,
   getProductsByCategory,
 } from "../controllers/category.controller.js";
+
 /**
  * Rutas para la gestión de categorías.
  *
@@ -14,8 +15,6 @@ import {
  * actualizar, eliminar categorías y listar los productos
  * asociados a una categoría específica.
  */
-
-
 const categoryRouter = Router();
 
 // Rutas CRUD de categorías.
