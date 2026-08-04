@@ -12,7 +12,7 @@ API REST construida con **Node.js + Express** siguiendo **Arquitectura en Capas*
 ## 📁 Estructura del Proyecto
 
 ```
-project/
+src/
 ├── app.js                     # Configuración de Express y rutas
 ├── config/
 │   └── db.js                  # Configuración y pool de conexión a MySQL
@@ -62,13 +62,14 @@ y `INSERT IGNORE`, por lo que conserva los registros actuales y solo crea las ta
 que falten (`tasks`, `pqrs`):
 
 ```bash
-mysql -u root -p < project/database/schema.sql
+mysql -u root -p < src/database/schema.sql
 ```
 
 ## ▶️ Ejecución
 
 ```bash
-npm start        # o npm run dev (ambos usan nodemon)
+npm start        # ejecución en producción (node)
+npm run dev      # desarrollo con auto-reinicio (nodemon)
 ```
 
 El servidor queda escuchando en `http://localhost:3000`.

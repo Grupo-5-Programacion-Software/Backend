@@ -1,30 +1,38 @@
 {
-  "name": "modelo",
+  "name": "backend-gestion-inventario",
   "version": "1.0.0",
-  "description": "Actividad 2",
-  "main": "project/app.js",
+  "description": "API REST de gestion de inventario (categorias, productos, usuarios, tareas, PQRS) construida con Node.js y Express.",
+  "main": "src/app.js",
   "scripts": {
-    "start": "nodemon project/app.js",
-    "dev": "nodemon project/app.js",
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/OscarSolano97/Modelos-Backend.git"
+    "url": "git+https://github.com/Grupo-5-Programacion-Software/Backend.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "express",
+    "mysql",
+    "api",
+    "rest",
+    "inventario"
+  ],
+  "author": "Grupo 5 - Programacion de Software",
   "license": "ISC",
   "type": "module",
   "bugs": {
-    "url": "https://github.com/OscarSolano97/Modelos-Backend/issues"
+    "url": "https://github.com/Grupo-5-Programacion-Software/Backend/issues"
   },
-  "homepage": "https://github.com/OscarSolano97/Modelos-Backend#readme",
+  "homepage": "https://github.com/Grupo-5-Programacion-Software/Backend#readme",
   "dependencies": {
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "mysql2": "^3.23.2",
+    "mysql2": "^3.23.2"
+  },
+  "devDependencies": {
     "nodemon": "^3.1.14"
   }
 }

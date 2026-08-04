@@ -2,7 +2,7 @@
 -- Este script respeta una base de datos ya existente: solo crea
 -- las tablas que falten (CREATE TABLE IF NOT EXISTS) y sus datos
 -- semilla usan INSERT IGNORE para no sobrescribir registros reales.
--- Ejecutar: mysql -u root -p < project/database/schema.sql
+-- Ejecutar: mysql -u root -p < src/database/schema.sql
 
 CREATE DATABASE IF NOT EXISTS inventario_adso;
 USE inventario_adso;
