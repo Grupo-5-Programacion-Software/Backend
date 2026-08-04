@@ -16,7 +16,7 @@ export const UserModel = {
    */
   findAll: async () => {
     const [rows] = await pool.query(
-      "SELECT id, name, email, created_at AS createdAt FROM usuarios ORDER BY id"
+      "SELECT id, name, email, created_at AS createdAt FROM users ORDER BY id"
     );
     return rows;
   },
@@ -28,7 +28,7 @@ export const UserModel = {
    */
   findById: async (id) => {
     const [rows] = await pool.query(
-      "SELECT id, name, email, created_at AS createdAt FROM usuarios WHERE id = ?",
+      "SELECT id, name, email, created_at AS createdAt FROM users WHERE id = ?",
       [id]
     );
     return rows[0];
@@ -41,7 +41,7 @@ export const UserModel = {
    */
   findByEmail: async (email) => {
     const [rows] = await pool.query(
-      "SELECT id, name, email FROM usuarios WHERE email = ?",
+      "SELECT id, name, email FROM users WHERE email = ?",
       [email]
     );
     return rows[0];
@@ -58,7 +58,7 @@ export const UserModel = {
   create: async (userData) => {
     const password = userData.password || "cambiar123";
     const [result] = await pool.query(
-      "INSERT INTO usuarios (name, email, password) VALUES (?, ?, ?)",
+      "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
       [userData.name, userData.email, password]
     );
     return { id: result.insertId, name: userData.name, email: userData.email };
@@ -72,7 +72,7 @@ export const UserModel = {
    */
   update: async (id, updatedFields) => {
     const [result] = await pool.query(
-      "UPDATE usuarios SET name = ?, email = ? WHERE id = ?",
+      "UPDATE users SET name = ?, email = ? WHERE id = ?",
       [updatedFields.name, updatedFields.email, id]
     );
     if (result.affectedRows === 0) return null;
@@ -85,7 +85,7 @@ export const UserModel = {
    * @returns {Promise<boolean>} `true` si se eliminó, `false` si no existía.
    */
   delete: async (id) => {
-    const [result] = await pool.query("DELETE FROM usuarios WHERE id = ?", [id]);
+    const [result] = await pool.query("DELETE FROM users WHERE id = ?", [id]);
     return result.affectedRows > 0;
   },
 };
