@@ -15,7 +15,7 @@ export const ProductModel = {
    * @returns {Promise<Array<{id: number, code: string, name: string, price: number, stock: number, categoryId: number}>>} Los productos registrados.
    */
   findAll: async () => {
-    const [rows] = await pool.query("SELECT id, code, name, price, stock, category_id AS categoryId FROM products ORDER BY id");
+    const [rows] = await pool.query("SELECT id, code, name, price, stock, category_id AS categoryId FROM productos ORDER BY id");
     return rows;
   },
 
@@ -26,7 +26,7 @@ export const ProductModel = {
    */
   findById: async (id) => {
     const [rows] = await pool.query(
-      "SELECT id, code, name, price, stock, category_id AS categoryId FROM products WHERE id = ?",
+      "SELECT id, code, name, price, stock, category_id AS categoryId FROM productos WHERE id = ?",
       [id]
     );
     return rows[0];
@@ -39,7 +39,7 @@ export const ProductModel = {
    */
   findByCategoryId: async (categoryId) => {
     const [rows] = await pool.query(
-      "SELECT id, code, name, price, stock, category_id AS categoryId FROM products WHERE category_id = ? ORDER BY id",
+      "SELECT id, code, name, price, stock, category_id AS categoryId FROM productos WHERE category_id = ? ORDER BY id",
       [categoryId]
     );
     return rows;
@@ -55,14 +55,14 @@ export const ProductModel = {
    */
   create: async (newProduct) => {
     const [[{ maxCode }]] = await pool.query(
-      "SELECT MAX(CAST(SUBSTRING(code, 5) AS UNSIGNED)) AS maxCode FROM products"
+      "SELECT MAX(CAST(SUBSTRING(code, 5) AS UNSIGNED)) AS maxCode FROM productos"
     );
     const nextNumber = (maxCode || 0) + 1;
     const code = `PRD-${String(nextNumber).padStart(3, "0")}`;
     const stock = newProduct.stock ?? 0;
 
     const [result] = await pool.query(
-      "INSERT INTO products (code, name, price, stock, category_id) VALUES (?, ?, ?, ?, ?)",
+      "INSERT INTO productos (code, name, price, stock, category_id) VALUES (?, ?, ?, ?, ?)",
       [code, newProduct.name, newProduct.price, stock, newProduct.categoryId]
     );
     return { id: result.insertId, code, name: newProduct.name, price: newProduct.price, stock, categoryId: newProduct.categoryId };
@@ -77,7 +77,7 @@ export const ProductModel = {
    */
   update: async (id, updatedFields) => {
     const [result] = await pool.query(
-      "UPDATE products SET name = ?, price = ?, category_id = ? WHERE id = ?",
+      "UPDATE productos SET name = ?, price = ?, category_id = ? WHERE id = ?",
       [updatedFields.name, updatedFields.price, updatedFields.categoryId, id]
     );
     if (result.affectedRows === 0) return null;
@@ -90,7 +90,7 @@ export const ProductModel = {
    * @returns {Promise<boolean>} `true` si se eliminó, `false` si no existía.
    */
   delete: async (id) => {
-    const [result] = await pool.query("DELETE FROM products WHERE id = ?", [id]);
+    const [result] = await pool.query("DELETE FROM productos WHERE id = ?", [id]);
     return result.affectedRows > 0;
   },
 };

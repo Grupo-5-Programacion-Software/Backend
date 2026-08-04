@@ -50,10 +50,64 @@ src/
 │   ├── pqrs.routes.js
 │   └── admin.routes.js
 └── database/
-    └── schema.sql         # Script de base de datos y datos base
+    ├── schema.sql                    # Script de creación de la BD y datos base
+    └── migracion_nombres_espanol.sql # Migración aplicada: BD en español
 ```
 
-## 4. Preparación de entorno
+## 4. Base de datos (cómo se maneja)
+
+### 4.1 Estructura
+
+La base de datos se llama `inventario_adso` y **todas las tablas usan nombres en español** para que coincidan con el código:
+
+| Tabla | Modelo que la usa | Descripción |
+|---|---|---|
+| `categorias` | `category.model.js` | Categorías de productos |
+| `productos` | `product.model.js` | Productos (código `PRD-NNN`, precio, stock) |
+| `usuarios` | `user.model.js` | Usuarios del sistema |
+| `tareas` | `task.model.js` | Tareas asignadas a usuarios |
+| `pqrs` | `pqrs.model.js` | Peticiones, Quejas, Reclamos y Sugerencias |
+
+> **Nota:** las columnas conservan nombres en inglés (`name`, `price`, `stock`, `category_id`...) porque así las lee el código.
+
+### 4.2 Crear la base de datos desde cero
+
+```bash
+mysql -u root -p < src/database/schema.sql
+```
+
+El script crea las tablas que falten (no borra ni modifica lo existente) y carga datos semilla (categorías, usuarios demo, tareas y PQRS de ejemplo).
+
+### 4.3 Si ya existía una BD con tablas en inglés/duplicadas
+
+La BD quedó estandarizada con el script `migracion_nombres_espanol.sql`:
+
+```bash
+mysql -u root -p < src/database/migracion_nombres_espanol.sql
+```
+
+Lo que hizo la migración:
+
+- eliminó las tablas viejas y redundantes del sistema anterior (`categorias` vieja, `productos` vieja, `proveedores`, `clientes`, `ventas`, `detalle_ventas`, `movimientos_inventario`, `usuarios` vieja),
+- renombró `categories` → `categorias` y `products` → `productos` conservando los datos,
+- creó las tablas faltantes `usuarios`, `tareas` y `pqrs` con su estructura y datos semilla,
+- generó el código `PRD-NNN` a los productos que no lo tenían.
+
+### 4.4 Respaldo y restauración
+
+Respaldo de la BD completa:
+
+```bash
+mysqldump -u root -p inventario_adso > respaldo_inventario.sql
+```
+
+Restaurar un respaldo:
+
+```bash
+mysql -u root -p inventario_adso < respaldo_inventario.sql
+```
+
+## 5. Preparación de entorno
 
 Instala dependencias:
 
@@ -78,7 +132,7 @@ DB_NAME=inventario_adso
 PORT=3000
 ```
 
-## 5. Cómo levantar la API
+## 6. Cómo levantar la API
 
 ```bash
 npm start
@@ -90,7 +144,7 @@ La API queda disponible en:
 - `http://localhost:3000`
 - salud: `http://localhost:3000/health`
 
-## 6. Endpoints principales
+## 7. Endpoints principales
 
 ### Categorías
 
@@ -161,7 +215,7 @@ Estados permitidos:
 |---|---|---|
 | GET | /admin/stats | Estadísticas globales |
 
-## 7. Formato de respuesta estándar
+## 8. Formato de respuesta estándar
 
 Todas las rutas responden con el mismo formato:
 
@@ -174,14 +228,14 @@ Todas las rutas responden con el mismo formato:
 }
 ```
 
-## 8. Reglas de integridad
+## 9. Reglas de integridad
 
 - No se puede borrar una categoría si tiene productos asociados.
 - El correo del usuario debe ser único.
 - Si un usuario se elimina, las tareas quedan sin asignar.
 - Las tareas deben apuntar a usuarios existentes.
 
-## 9. Cómo probar la API
+## 10. Cómo probar la API
 
 Ejemplos de uso con `curl`:
 
@@ -193,7 +247,6 @@ curl -X POST http://localhost:3000/tasks -H "Content-Type: application/json" -d 
 curl http://localhost:3000/admin/stats
 ```
 
-## 10. Relación con el frontend
+## 11. Relación con el frontend
 
 El frontend usa el proxy de Vite para redirigir `/api` hacia el backend en `http://localhost:3000`. Por eso el frontend puede consumir los endpoints sin tener CORS en desarrollo. La app de frontend además tiene un respaldo local para demo cuando el backend no está levantado.
-
