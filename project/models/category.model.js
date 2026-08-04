@@ -1,68 +1,63 @@
-
-import categoriesData from "../data/categories.data.js";
+import { pool } from "../config/db.js";
 
 /**
  * Modelo de categorías.
  *
  * Administra las operaciones de acceso y modificación
- * de la información de las categorías almacenadas en memoria.
+ * de las categorías persistidas en MySQL.
  */
 
 export const CategoryModel = {
-  
+
   // Retorna todas las categorías.
   /**
-   * @returns {Array<{id: number, name: string}>} Las categorías registradas.
+   * @returns {Promise<Array<{id: number, name: string}>>} Las categorías registradas.
    */
-  findAll: () => {
-    return categoriesData;
+  findAll: async () => {
+    const [rows] = await pool.query("SELECT id, name FROM categories ORDER BY id");
+    return rows;
   },
 
   // Busca una categoría por su identificador.
   /**
    * @param {number} id Identificador único de la categoría.
-   * @returns {object|undefined} La categoría encontrada o `undefined` si no existe.
+   * @returns {Promise<object|undefined>} La categoría encontrada o `undefined` si no existe.
    */
-  findById: (id) => {
-    return categoriesData.find((c) => c.id === id);
+  findById: async (id) => {
+    const [rows] = await pool.query("SELECT id, name FROM categories WHERE id = ?", [id]);
+    return rows[0];
   },
 
-  // Crea una nueva categoría y le asigna un identificador.
+  // Crea una nueva categoría.
   /**
    * @param {{name: string}} newCategory Datos de la categoría a crear.
-   * @returns {{id: number, name: string}} La categoría creada con su ID asignado.
+   * @returns {Promise<{id: number, name: string}>} La categoría creada con su ID asignado.
+   * @throws {Error} Si el nombre ya está registrado o es inválido.
    */
-  create: (newCategory) => {
-    const id = Math.max(0, ...categoriesData.map((c) => c.id)) + 1;
-    const categoryWithId = { id, ...newCategory };
-    categoriesData.push(categoryWithId);
-    return categoryWithId;
+  create: async (newCategory) => {
+    const [result] = await pool.query("INSERT INTO categories (name) VALUES (?)", [newCategory.name]);
+    return { id: result.insertId, name: newCategory.name };
   },
 
   // Actualiza los datos de una categoría existente.
   /**
    * @param {number} id Identificador único de la categoría.
    * @param {Partial<{name: string}>} updatedFields Campos a actualizar.
-   * @returns {object|null} La categoría actualizada o `null` si no existe.
+   * @returns {Promise<object|null>} La categoría actualizada o `null` si no existe.
    */
-  update: (id, updatedFields) => {
-    const index = categoriesData.findIndex((c) => c.id === id);
-    if (index === -1) return null;
-
-    categoriesData[index] = { ...categoriesData[index], ...updatedFields };
-    return categoriesData[index];
+  update: async (id, updatedFields) => {
+    const [result] = await pool.query("UPDATE categories SET name = ? WHERE id = ?", [updatedFields.name, id]);
+    if (result.affectedRows === 0) return null;
+    return { id, name: updatedFields.name };
   },
 
   // Elimina una categoría por su identificador.
   /**
    * @param {number} id Identificador único de la categoría.
-   * @returns {boolean} `true` si se eliminó, `false` si no existía.
+   * @returns {Promise<boolean>} `true` si se eliminó, `false` si no existía.
    */
-  delete: (id) => {
-    const index = categoriesData.findIndex((category) => category.id === id);
-    if (index === -1) return false;
-
-    categoriesData.splice(index, 1);
-    return true;
+  delete: async (id) => {
+    const [result] = await pool.query("DELETE FROM categories WHERE id = ?", [id]);
+    return result.affectedRows > 0;
   },
 };
