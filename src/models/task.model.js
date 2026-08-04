@@ -11,16 +11,41 @@ import { pool } from "../config/db.js";
  */
 export const TaskModel = {
   // Retorna todas las tareas con el nombre del usuario asignado.
+  // Soporta filtros opcionales: status, userId y búsqueda de texto (q).
+  // El WHERE se construye dinámicamente con consultas preparadas (?).
   /**
-   * @returns {Promise<Array>} Las tareas registradas.
+   * @param {{status?: string, userId?: number, q?: string}} [filters] Filtros opcionales.
+   * @returns {Promise<Array>} Las tareas que coinciden con los filtros.
    */
-  findAll: async () => {
+  findAll: async (filters = {}) => {
+    const conditions = [];
+    const values = [];
+
+    if (filters.status) {
+      conditions.push("t.status = ?");
+      values.push(filters.status);
+    }
+
+    if (filters.userId) {
+      conditions.push("t.user_id = ?");
+      values.push(filters.userId);
+    }
+
+    if (filters.q) {
+      conditions.push("(t.title LIKE ? OR t.description LIKE ?)");
+      values.push(`%${filters.q}%`, `%${filters.q}%`);
+    }
+
+    const where = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+
     const [rows] = await pool.query(
       `SELECT t.id, t.title, t.description, t.status,
               t.user_id AS userId, u.name AS userName
        FROM tasks t
        LEFT JOIN users u ON u.id = t.user_id
-       ORDER BY t.id`
+       ${where}
+       ORDER BY t.id`,
+      values
     );
     return rows;
   },
