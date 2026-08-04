@@ -1,8 +1,8 @@
--- Esquema de la base de datos: backend_actividad2
+-- Esquema de la base de datos: inventario_adso
 -- Ejecutar una sola vez: mysql -u root -p < project/database/schema.sql
 
-CREATE DATABASE IF NOT EXISTS backend_actividad2;
-USE backend_actividad2;
+CREATE DATABASE IF NOT EXISTS inventario_adso;
+USE inventario_adso;
 
 -- Tabla de categorías
 CREATE TABLE IF NOT EXISTS categories (
