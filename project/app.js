@@ -40,8 +40,11 @@ app.use((req, res) => {
   });
 });
 
-const PORT = 3000;
+// El puerto se puede definir con la variable de entorno PORT.
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Servidor encendido en el puerto ${PORT}`);
 });
+
+export default app;
