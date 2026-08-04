@@ -1,36 +1,48 @@
-# Backend - API de Gestión de Categorías y Productos
+# Backend - API REST de Gestión
 
-API REST construida con **Node.js + Express** siguiendo **Arquitectura en Capas** con persistencia en **MySQL**.
+API REST construida con Node.js, Express y MySQL para soportar el frontend del sistema de gestión.
 
-## 🚀 Tecnologías
+## 1. Qué expone esta API
+
+La API ofrece endpoints para:
+
+- gestionar categorías,
+- gestionar productos,
+- gestionar usuarios,
+- crear y actualizar tareas,
+- registrar y clasificar PQRS,
+- consultar estadísticas globales del sistema.
+
+## 2. Tecnologías
 
 - Node.js
 - Express 5
-- MySQL 8 (mysql2)
-- Nodemon (desarrollo)
+- MySQL 8 + mysql2
+- dotenv
+- cors
+- nodemon para desarrollo
 
-## 📁 Estructura del Proyecto
+## 3. Estructura real del backend
 
-```
+```text
 src/
-├── app.js                     # Configuración de Express y rutas
-├── config/
-│   └── db.js                  # Configuración y pool de conexión a MySQL
-├── controllers/               # Manejo de peticiones y respuestas HTTP
+├── app.js                 # Arranque de Express, middlewares y montaje de rutas
+├── config/db.js           # Pool de conexión a MySQL
+├── controllers/           # Maneja HTTP request/response
 │   ├── category.controller.js
 │   ├── product.controller.js
 │   ├── user.controller.js
 │   ├── task.controller.js
 │   ├── pqrs.controller.js
 │   └── admin.controller.js
-├── models/                    # Lógica de acceso y manipulación de datos
+├── models/                # Lógica de acceso a datos por recurso
 │   ├── category.model.js
 │   ├── product.model.js
 │   ├── user.model.js
 │   ├── task.model.js
 │   ├── pqrs.model.js
 │   └── admin.model.js
-├── routes/                    # Definición de rutas y endpoints
+├── routes/                # Definición de endpoints por recurso
 │   ├── category.routes.js
 │   ├── product.routes.js
 │   ├── user.routes.js
@@ -38,165 +50,120 @@ src/
 │   ├── pqrs.routes.js
 │   └── admin.routes.js
 └── database/
-    └── schema.sql             # Creación de la BD, tablas y datos iniciales
+    └── schema.sql         # Script de base de datos y datos base
 ```
 
-## 📦 Instalación
+## 4. Preparación de entorno
+
+Instala dependencias:
 
 ```bash
 npm install
 ```
 
-## 🗄️ Configurar la base de datos
-
-Copia el archivo `.env.example` a `.env` y completa las credenciales de tu MySQL.
-Si la contraseña empieza con `#`, debe ir entre comillas (`DB_PASSWORD="#..."`):
+Copia el ejemplo de variables de entorno:
 
 ```bash
 cp .env.example .env
 ```
 
-Crea (o completa) la base de datos, las tablas y los datos iniciales. El script
-**respeta una base `inventario_adso` ya existente**: usa `CREATE TABLE IF NOT EXISTS`
-y `INSERT IGNORE`, por lo que conserva los registros actuales y solo crea las tablas
-que falten (`tasks`, `pqrs`):
+Archivo `.env.example`:
 
-```bash
-mysql -u root -p < src/database/schema.sql
+```env
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD="tu_contraseña"
+DB_NAME=inventario_adso
+PORT=3000
 ```
 
-## ▶️ Ejecución
+## 5. Cómo levantar la API
 
 ```bash
-npm start        # ejecución en producción (node)
-npm run dev      # desarrollo con auto-reinicio (nodemon)
+npm start
+npm run dev
 ```
 
-El servidor queda escuchando en `http://localhost:3000`.
+La API queda disponible en:
 
-## 🔌 Endpoints
+- `http://localhost:3000`
+- salud: `http://localhost:3000/health`
+
+## 6. Endpoints principales
 
 ### Categorías
 
 | Método | Ruta | Descripción |
-|--------|------|-------------|
-| GET | `/categories` | Listar todas las categorías |
-| GET | `/categories/:id` | Obtener categoría por ID |
-| POST | `/categories` | Crear una categoría |
-| PUT | `/categories/:id` | Actualizar una categoría |
-| DELETE | `/categories/:id` | Eliminar categoría (solo si no tiene productos) |
-| GET | `/categories/:id/products` | Obtener productos de una categoría |
-
-```bash
-# Crear una categoría
-curl -X POST http://localhost:3000/categories \
-  -H "Content-Type: application/json" \
-  -d '{"name": "Accesorios"}'
-```
+|---|---|---|
+| GET | /categories | Lista categorías |
+| GET | /categories/:id | Obtiene una categoría |
+| POST | /categories | Crea una categoría |
+| PUT | /categories/:id | Actualiza una categoría |
+| DELETE | /categories/:id | Elimina una categoría |
 
 ### Productos
 
 | Método | Ruta | Descripción |
-|--------|------|-------------|
-| GET | `/products` | Listar todos los productos |
-| GET | `/products/:id` | Obtener producto por ID |
-| POST | `/products` | Crear un producto |
-| PUT | `/products/:id` | Actualizar un producto |
-| DELETE | `/products/:id` | Eliminar un producto |
-
-```bash
-# Crear un producto (el código PRD-NNN se genera automáticamente)
-curl -X POST http://localhost:3000/products \
-  -H "Content-Type: application/json" \
-  -d '{"name": "Mouse Gamer", "price": 45.90, "stock": 12, "categoryId": 2}'
-```
+|---|---|---|
+| GET | /products | Lista productos |
+| GET | /products/:id | Obtiene un producto |
+| POST | /products | Crea un producto |
+| PUT | /products/:id | Actualiza un producto |
+| DELETE | /products/:id | Elimina un producto |
 
 ### Usuarios
 
 | Método | Ruta | Descripción |
-|--------|------|-------------|
-| GET | `/users` | Listar todos los usuarios |
-| GET | `/users/:id` | Obtener usuario por ID |
-| POST | `/users` | Crear un usuario (`name`, `email`) |
-| PUT | `/users/:id` | Actualizar un usuario |
-| DELETE | `/users/:id` | Eliminar un usuario |
+|---|---|---|
+| GET | /users | Lista usuarios |
+| GET | /users/:id | Obtiene un usuario |
+| POST | /users | Crea un usuario |
+| PUT | /users/:id | Actualiza un usuario |
+| DELETE | /users/:id | Elimina un usuario |
 
-```bash
-# Crear un usuario
-curl -X POST http://localhost:3000/users \
-  -H "Content-Type: application/json" \
-  -d '{"name": "Ana Torres", "email": "ana.torres@mail.com"}'
-```
-
-### Tareas (asignación a usuarios)
+### Tareas
 
 | Método | Ruta | Descripción |
-|--------|------|-------------|
-| GET | `/tasks` | Listar todas las tareas |
-| GET | `/tasks/:id` | Obtener tarea por ID |
-| POST | `/tasks` | Crear tarea (`title`, `description`, `userId`) |
-| PUT | `/tasks/:id` | Actualizar tarea completa |
-| PATCH | `/tasks/:id` | Actualización parcial (p. ej. `status`) |
-| DELETE | `/tasks/:id` | Eliminar una tarea |
+|---|---|---|
+| GET | /tasks | Lista tareas |
+| GET | /tasks/:id | Obtiene una tarea |
+| POST | /tasks | Crea una tarea |
+| PUT | /tasks/:id | Actualiza una tarea |
+| PATCH | /tasks/:id | Actualiza parcialmente el estado |
+| DELETE | /tasks/:id | Elimina una tarea |
 
-Estados de tarea: `pendiente`, `en_progreso`, `completada`.
+Estados permitidos:
 
-```bash
-# Crear una tarea asignada a un usuario existente
-curl -X POST http://localhost:3000/tasks \
-  -H "Content-Type: application/json" \
-  -d '{"title": "Revisar stock", "description": "Auditoría mensual", "userId": 2}'
-
-# Cambiar el estado de una tarea
-curl -X PATCH http://localhost:3000/tasks/1 \
-  -H "Content-Type: application/json" \
-  -d '{"status": "completada"}'
-```
+- pendiente
+- en_progreso
+- completada
 
 ### PQRS
 
 | Método | Ruta | Descripción |
-|--------|------|-------------|
-| GET | `/pqrs` | Listar todas las solicitudes |
-| GET | `/pqrs/:id` | Obtener solicitud por ID |
-| POST | `/pqrs` | Crear solicitud (`type`, `description`) |
-| PATCH | `/pqrs/:id` | Actualizar estado (`abierta`, `en_proceso`, `cerrada`) |
-| DELETE | `/pqrs/:id` | Eliminar una solicitud |
+|---|---|---|
+| GET | /pqrs | Lista PQRS |
+| GET | /pqrs/:id | Obtiene una PQRS |
+| POST | /pqrs | Crea una PQRS |
+| PATCH | /pqrs/:id | Cambia estado |
+| DELETE | /pqrs/:id | Elimina una PQRS |
 
-Tipos de PQRS: `peticion`, `queja`, `reclamo`, `sugerencia`.
+Estados permitidos:
 
-```bash
-# Enviar una solicitud
-curl -X POST http://localhost:3000/pqrs \
-  -H "Content-Type: application/json" \
-  -d '{"type": "reclamo", "description": "El teclado llegó dañado"}'
+- abierta
+- en_proceso
+- cerrada
 
-# Cambiar el estado de una solicitud
-curl -X PATCH http://localhost:3000/pqrs/1 \
-  -H "Content-Type: application/json" \
-  -d '{"status": "en_proceso"}'
-```
-
-### Panel Administrativo
+### Administración
 
 | Método | Ruta | Descripción |
-|--------|------|-------------|
-| GET | `/admin/stats` | Conteos de usuarios, tareas y PQRS |
+|---|---|---|
+| GET | /admin/stats | Estadísticas globales |
 
-```bash
-curl http://localhost:3000/admin/stats
-```
+## 7. Formato de respuesta estándar
 
-## 🧪 Reglas de Integridad
-
-- No se permite eliminar una categoría que tenga productos vinculados. Devuelve `409 Conflict`.
-- El correo de un usuario es único. Un correo duplicado devuelve `409 Conflict`.
-- Al eliminar un usuario, sus tareas quedan sin asignar (`ON DELETE SET NULL`), conservando el historial.
-- No se puede asignar una tarea a un usuario inexistente. Devuelve `400 Bad Request`.
-
-## 📋 Formato de Respuesta
-
-Todas las respuestas (éxito y error) usan la misma estructura:
+Todas las rutas responden con el mismo formato:
 
 ```json
 {
@@ -207,20 +174,26 @@ Todas las respuestas (éxito y error) usan la misma estructura:
 }
 ```
 
-- `success`: `true` si la operación fue exitosa, `false` si falló.
-- `message`: descripción legible del resultado.
-- `data`: resultado de la operación (objeto, arreglo o `[]`).
-- `errors`: mensajes de error detallados (vacío si no hubo).
+## 8. Reglas de integridad
 
-## 🔗 Integración con el Frontend
+- No se puede borrar una categoría si tiene productos asociados.
+- El correo del usuario debe ser único.
+- Si un usuario se elimina, las tareas quedan sin asignar.
+- Las tareas deben apuntar a usuarios existentes.
 
-El frontend (Vite) consume esta API mediante un **proxy**: en desarrollo,
-las peticiones que empiezan por `/api` se redirigen a `http://localhost:3000`
-y se les quita el prefijo `/api`. Por eso desde el navegador basta usar
-`/api/users`, `/api/products`, etc. sin preocuparse por CORS.
+## 9. Cómo probar la API
 
-Pasos para probar el sistema completo:
+Ejemplos de uso con `curl`:
 
-1. Levantar el backend: `npm start` (puerto 3000).
-2. Levantar el frontend: `npm run dev` en el repositorio `Frontend` (puerto 5173).
-3. Abrir `http://localhost:5173` y navegar entre las pestañas del sistema.
+```bash
+curl http://localhost:3000/health
+curl http://localhost:3000/categories
+curl -X POST http://localhost:3000/categories -H "Content-Type: application/json" -d '{"name":"Accesorios"}'
+curl -X POST http://localhost:3000/tasks -H "Content-Type: application/json" -d '{"title":"Revisar stock","description":"Auditoría","userId":2}'
+curl http://localhost:3000/admin/stats
+```
+
+## 10. Relación con el frontend
+
+El frontend usa el proxy de Vite para redirigir `/api` hacia el backend en `http://localhost:3000`. Por eso el frontend puede consumir los endpoints sin tener CORS en desarrollo. La app de frontend además tiene un respaldo local para demo cuando el backend no está levantado.
+
