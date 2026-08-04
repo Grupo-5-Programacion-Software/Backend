@@ -48,15 +48,18 @@ export const UserModel = {
   },
 
   // Crea un nuevo usuario.
+  // La columna `password` es NOT NULL en la BD existente; se usa un
+  // valor por defecto mientras este módulo no implemente autenticación.
   /**
-   * @param {{name: string, email: string}} userData Datos del usuario.
+   * @param {{name: string, email: string, password?: string}} userData Datos del usuario.
    * @returns {Promise<{id: number, name: string, email: string}>} Usuario creado.
    * @throws {Error} Si el correo ya está registrado (ER_DUP_ENTRY).
    */
   create: async (userData) => {
+    const password = userData.password || "cambiar123";
     const [result] = await pool.query(
-      "INSERT INTO users (name, email) VALUES (?, ?)",
-      [userData.name, userData.email]
+      "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
+      [userData.name, userData.email, password]
     );
     return { id: result.insertId, name: userData.name, email: userData.email };
   },

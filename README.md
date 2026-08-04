@@ -49,13 +49,17 @@ npm install
 
 ## 🗄️ Configurar la base de datos
 
-Copia el archivo `.env.example` a `.env` y completa las credenciales de tu MySQL:
+Copia el archivo `.env.example` a `.env` y completa las credenciales de tu MySQL.
+Si la contraseña empieza con `#`, debe ir entre comillas (`DB_PASSWORD="#..."`):
 
 ```bash
 cp .env.example .env
 ```
 
-Crea la base de datos, las tablas y los datos iniciales:
+Crea (o completa) la base de datos, las tablas y los datos iniciales. El script
+**respeta una base `inventario_adso` ya existente**: usa `CREATE TABLE IF NOT EXISTS`
+y `INSERT IGNORE`, por lo que conserva los registros actuales y solo crea las tablas
+que falten (`tasks`, `pqrs`):
 
 ```bash
 mysql -u root -p < project/database/schema.sql

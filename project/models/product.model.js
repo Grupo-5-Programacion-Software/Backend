@@ -12,10 +12,10 @@ export const ProductModel = {
 
   // Retorna todos los productos.
   /**
-   * @returns {Promise<Array<{id: number, name: string, price: number, categoryId: number}>>} Los productos registrados.
+   * @returns {Promise<Array<{id: number, code: string, name: string, price: number, stock: number, categoryId: number}>>} Los productos registrados.
    */
   findAll: async () => {
-    const [rows] = await pool.query("SELECT id, name, price, category_id AS categoryId FROM products ORDER BY id");
+    const [rows] = await pool.query("SELECT id, code, name, price, stock, category_id AS categoryId FROM products ORDER BY id");
     return rows;
   },
 
@@ -26,7 +26,7 @@ export const ProductModel = {
    */
   findById: async (id) => {
     const [rows] = await pool.query(
-      "SELECT id, name, price, category_id AS categoryId FROM products WHERE id = ?",
+      "SELECT id, code, name, price, stock, category_id AS categoryId FROM products WHERE id = ?",
       [id]
     );
     return rows[0];
@@ -39,24 +39,33 @@ export const ProductModel = {
    */
   findByCategoryId: async (categoryId) => {
     const [rows] = await pool.query(
-      "SELECT id, name, price, category_id AS categoryId FROM products WHERE category_id = ? ORDER BY id",
+      "SELECT id, code, name, price, stock, category_id AS categoryId FROM products WHERE category_id = ? ORDER BY id",
       [categoryId]
     );
     return rows;
   },
 
   // Crea un producto verificando que la categoría exista.
+  // La columna `code` es NOT NULL en la BD existente; se genera
+  // automáticamente como PRD-NNN a partir del código más alto.
   /**
-   * @param {{name: string, price: number, categoryId?: number}} newProduct Datos del producto a crear.
+   * @param {{name: string, price: number, categoryId?: number, stock?: number}} newProduct Datos del producto a crear.
    * @returns {Promise<object>} El producto creado con su ID asignado.
    * @throws {Error} Si la categoría indicada no existe.
    */
   create: async (newProduct) => {
-    const [result] = await pool.query(
-      "INSERT INTO products (name, price, category_id) VALUES (?, ?, ?)",
-      [newProduct.name, newProduct.price, newProduct.categoryId]
+    const [[{ maxCode }]] = await pool.query(
+      "SELECT MAX(CAST(SUBSTRING(code, 5) AS UNSIGNED)) AS maxCode FROM products"
     );
-    return { id: result.insertId, name: newProduct.name, price: newProduct.price, categoryId: newProduct.categoryId };
+    const nextNumber = (maxCode || 0) + 1;
+    const code = `PRD-${String(nextNumber).padStart(3, "0")}`;
+    const stock = newProduct.stock ?? 0;
+
+    const [result] = await pool.query(
+      "INSERT INTO products (code, name, price, stock, category_id) VALUES (?, ?, ?, ?, ?)",
+      [code, newProduct.name, newProduct.price, stock, newProduct.categoryId]
+    );
+    return { id: result.insertId, code, name: newProduct.name, price: newProduct.price, stock, categoryId: newProduct.categoryId };
   },
 
   // Actualiza un producto y valida la categoría asignada.
